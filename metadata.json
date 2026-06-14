@@ -1,0 +1,6 @@
+{
+  "name": "Shifa Clinic & Appointment Portal",
+  "description": "A polished clinic management platform where patients can explore multiple departments, search qualified doctors, and book/manage clinical appointments with print-ready OPD slips.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
