@@ -141,7 +141,8 @@ export default function App() {
   const fetchAppointments = async () => {
     try {
       let url = '/api/appointments';
-      if (patientUser?.email) {
+      // If we are in the admin tab, we want to load all appointments from Supabase!
+      if (patientUser?.email && activeTab !== 'admin') {
         url += `?email=${encodeURIComponent(patientUser.email)}`;
       }
       const res = await fetch(url);
@@ -162,8 +163,8 @@ export default function App() {
           displayApts = INITIAL_APPOINTMENTS;
         }
       }
-      // Apply offline fallback email filtering
-      if (patientUser?.email) {
+      // Apply offline fallback email filtering if not in admin tab
+      if (patientUser?.email && activeTab !== 'admin') {
         displayApts = displayApts.filter(apt => apt.patientEmail && apt.patientEmail.toLowerCase().trim() === patientUser.email.toLowerCase().trim());
       }
       setAppointments(displayApts);
@@ -172,7 +173,7 @@ export default function App() {
 
   useEffect(() => {
     fetchAppointments();
-  }, [patientUser?.email]);
+  }, [patientUser?.email, activeTab]);
 
   const handlePatientLogin = (name: string, email: string, phone: string) => {
     const user = { name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), isSaved: true };
@@ -278,7 +279,7 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#070b14] flex flex-col justify-between selection:bg-cyan-500/30 selection:text-cyan-200 font-sans antialiased text-slate-200">
+    <div className="min-h-screen bg-black flex flex-col justify-between selection:bg-cyan-400 selection:text-black font-sans antialiased text-neutral-200">
       
       {/* 1. TOP HEADER & NAVBAR */}
       <Header 
@@ -293,26 +294,26 @@ export default function App() {
         
         {/* Patient Register/Check-in banner */}
         {patientUser ? (
-          <div className="bg-[#0b1329]/80 border border-slate-800/85 rounded-3xl p-5 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in backdrop-blur-md">
+          <div className="bg-neutral-950 border border-neutral-900 rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-cyan-950/50 text-cyan-400 rounded-2xl flex items-center justify-center shrink-0 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-                <Smile className="w-5.5 h-5.5 animate-bounce text-cyan-400" />
+              <div className="p-3 bg-neutral-900 text-cyan-400 rounded-2xl flex items-center justify-center shrink-0 border border-neutral-800 shadow-[0_0_12px_rgba(6,182,212,0.1)]">
+                <Smile className="w-5.5 h-5.5 text-cyan-400" />
               </div>
               <div className="space-y-0.5">
                 <p className="text-[9px] font-mono uppercase tracking-wider text-cyan-400 font-bold">Checked-in Patient Session</p>
                 <div className="flex items-center gap-2">
                   <h4 className="font-sans font-bold text-sm text-white">{patientUser.name}</h4>
                   {patientUser.isSaved ? (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-950/40 text-emerald-400 rounded-full text-[9px] font-semibold border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-neutral-900 text-cyan-400 rounded-full text-[9px] font-semibold border border-neutral-805">
                       Sync Enabled
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-950/40 text-amber-400 rounded-full text-[9px] font-semibold border border-amber-500/20 animate-pulse">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-neutral-900 text-amber-500 rounded-full text-[9px] font-semibold border border-neutral-805 animate-pulse">
                       Not Saved (Email only)
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-slate-400 font-sans font-medium">
+                <p className="text-[11px] text-neutral-400 font-sans font-medium">
                   {patientUser.email} {patientUser.phone ? `| ${patientUser.phone}` : ''}
                 </p>
               </div>
@@ -324,26 +325,26 @@ export default function App() {
                   setActiveTab('appointments');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-full shadow-lg shadow-cyan-500/10 cursor-pointer transition border border-cyan-400/25"
+                className="px-4 py-2 bg-white text-black hover:bg-neutral-100 text-xs font-bold rounded-full cursor-pointer transition border border-white"
               >
                 My OPD Tickets
               </button>
               <button
                 onClick={handlePatientLogout}
-                className="px-4 py-2 border border-slate-800 hover:bg-slate-900 text-slate-350 hover:text-white text-xs font-bold rounded-full cursor-pointer transition animate-fade-in"
+                className="px-4 py-2 border border-neutral-800 hover:bg-neutral-900 text-neutral-405 hover:text-white text-xs font-bold rounded-full cursor-pointer transition animate-fade-in"
               >
                 Sign Out
               </button>
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-slate-950 via-[#0e172e] to-slate-950 border border-slate-800/80 rounded-3xl p-5 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative overflow-hidden">
+          <div className="bg-neutral-950 border border-neutral-900 rounded-3xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative overflow-hidden">
             <div className="space-y-1">
-              <span className="inline-flex items-center gap-1 bg-cyan-950 text-cyan-300 border border-cyan-800 px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-wide uppercase font-bold">
+              <span className="inline-flex items-center gap-1 bg-neutral-900 text-cyan-400 border border-neutral-800 px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-wide uppercase font-bold">
                 Patient Self Check-In
               </span>
               <h4 className="font-sans font-bold text-base text-white tracking-tight">Check-In With Email and Phone Prior to OPD Booking</h4>
-              <p className="text-[11px] text-slate-400 leading-relaxed max-w-2xl font-sans">
+              <p className="text-[11px] text-neutral-400 leading-relaxed max-w-2xl font-sans">
                 Please register your session. This ensures clinical helpdesk tickets can search and store chats and queue slots securely.
               </p>
             </div>
@@ -352,7 +353,7 @@ export default function App() {
                 setActiveTab('book');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-455 hover:to-blue-555 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-lg shadow-cyan-500/15 border border-cyan-400/25 cursor-pointer transition shrink-0"
+              className="bg-white hover:bg-neutral-100 text-black text-xs font-bold px-5 py-2.5 rounded-full cursor-pointer transition shrink-0 border border-white"
             >
               Sign In / Session Check-In
             </button>
@@ -364,49 +365,48 @@ export default function App() {
           <div className="space-y-12">
             
             {/* Elegant Hero Slider section with Urdu/Hindi easy guide banner */}
-            <section className="bg-gradient-to-br from-[#0c142b] via-[#05080f] to-[#0b1329] rounded-3xl p-6 sm:p-10 lg:p-14 text-white relative overflow-hidden border border-slate-800 shadow-3xl">
-              {/* Absolutes decorative blobs */}
-              <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 -mr-20 -mt-20 animate-pulse"></div>
-              <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 -ml-20 -mb-20"></div>
+            <section className="bg-neutral-950 rounded-3xl p-6 sm:p-10 lg:p-14 text-white relative overflow-hidden border border-neutral-900 shadow-md">
+              {/* Subtle monochrome decorative ambient glow */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-neutral-800 rounded-full mix-blend-screen filter blur-3xl opacity-5 -mr-20 -mt-20"></div>
 
               <div className="max-w-3xl space-y-6 relative z-10 text-left">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-500/10 text-cyan-300 rounded-full text-xs font-mono tracking-wider uppercase border border-cyan-500/20 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.1)]">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-900 text-cyan-400 rounded-full text-xs font-mono tracking-wider uppercase border border-neutral-800 font-semibold">
                   <Sparkle className="w-3.5 h-3.5 text-cyan-400" />
                   Live Digital Appointment Portal - 2026
                 </span>
 
                 <h2 className="font-sans font-extrabold text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-white">
                   Expert Clinicians. <br />
-                  <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">Zero Wait Lobby Counter.</span>
+                  <span className="text-cyan-400">Zero Wait Lobby Counter.</span>
                 </h2>
 
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl font-medium font-sans">
+                <p className="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-xl font-medium font-sans">
                   {CLINIC_INFO.tagline}. Simply reserve your OPD slot online, get an instant queue token number, and get prioritized medical diagnostics at your selected time.
                 </p>
 
                 {/* Patient Quick Instruction banner (Urdu/Hindi) */}
-                <div className="p-4 bg-slate-950/85 border border-slate-800/80 rounded-2xl text-xs space-y-1 max-w-lg shadow-2xl backdrop-blur-md">
+                <div className="p-4 bg-neutral-900/60 border border-neutral-850 rounded-2xl text-xs space-y-1 max-w-lg backdrop-blur-md">
                   <p className="font-bold text-cyan-400 flex items-center gap-2">
                     <BadgeAlert className="w-4 h-4 shrink-0 text-cyan-400" />
                     क्लीनिक विजिट के लिए आसान गाइड:
                   </p>
-                  <p className="text-slate-350 leading-normal font-sans font-medium">
-                    १. नीचे अपनी पसंद के डॉक्टर चुनें। २. तारीख और "टाइम स्लॉट" सिलेक्ट करें। ३. तुरंत अपना डिजिटल OPD टोकन काउंटर पर दिखाएं और सीधे डॉक्टर से मिलें!
+                  <p className="text-neutral-300 leading-normal font-sans font-medium select-none">
+                    १. नीचे अपनी पसंद के डॉक्टर चुनें। २. तारीख और "टाइम स्लॉट" सिलेक्ट करें। ३. तुरंत अपना OPD टोकन काउंटर पर दिखाएं और सीधे डॉक्टर से मिलें!
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-3 pt-3">
                   <button
                     onClick={() => handleInitiateBooking(null)}
-                    className="bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-550 font-bold text-xs sm:text-sm text-white px-6 py-4 rounded-full transition duration-300 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-400/30 cursor-pointer flex items-center gap-2 border border-cyan-400/20 active:scale-98 animate-fade-in"
+                    className="bg-white hover:bg-neutral-100 font-extrabold text-xs sm:text-sm text-black px-6 py-4 rounded-full transition duration-300 shadow-lg cursor-pointer flex items-center gap-2 border border-white active:scale-98"
                   >
-                    <Plus className="w-4 h-4 text-white stroke-[2.5]" />
+                    <Plus className="w-4 h-4 text-black stroke-[3.0]" />
                     Book Live OPD Appointment Now
                   </button>
                   
                   <button
                     onClick={() => setActiveTab('appointments')}
-                    className="bg-[#0b1329]/80 hover:bg-[#111c3a] text-slate-300 hover:text-white font-bold text-xs sm:text-sm px-6 py-4 rounded-full transition duration-200 border border-slate-800 cursor-pointer flex items-center gap-2 active:scale-98"
+                    className="bg-neutral-900 hover:bg-neutral-850 text-neutral-300 hover:text-white font-bold text-xs sm:text-sm px-6 py-4 rounded-full transition duration-200 border border-neutral-800 hover:border-neutral-700 cursor-pointer flex items-center gap-2 active:scale-98"
                   >
                     <CalendarDays className="w-4 h-4 text-cyan-400 animate-pulse" />
                     Check My Token Status

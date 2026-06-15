@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, X, Send, User, MessageCircle, HeartPulse, Clock } from 'lucide-react';
+import { MessageSquare, X, Send, User, HeartPulse } from 'lucide-react';
 import { ChatMessage } from '../types';
 
 export default function ChatSupport() {
@@ -15,7 +15,6 @@ export default function ChatSupport() {
   const [isNameRegistered, setIsNameRegistered] = useState<boolean>(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState<string>('');
-  const [isTyping, setIsTyping] = useState<boolean>(false);
   
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -175,29 +174,29 @@ export default function ChatSupport() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer border border-blue-500 relative"
+          className="w-14 h-14 bg-neutral-950 hover:bg-neutral-900 text-white rounded-full flex items-center justify-center shadow-2xl hover:shadow-cyan-400/10 hover:scale-105 transition-all cursor-pointer border border-neutral-800 relative group"
           id="shifa-support-toggle"
         >
-          <MessageSquare className="w-6 h-6 animate-pulse" />
-          <span className="absolute -top-1 -right-1 bg-emerald-500 w-3.5 h-3.5 rounded-full border-2 border-white animate-ping" />
-          <span className="absolute -top-1 -right-1 bg-emerald-500 w-3.5 h-3.5 rounded-full border-2 border-white" />
+          <MessageSquare className="w-5.5 h-5.5 text-cyan-400 group-hover:text-white transition-colors" />
+          <span className="absolute -top-1 -right-1 bg-cyan-400 w-3 h-3 rounded-full border-2 border-neutral-950 animate-ping" />
+          <span className="absolute -top-1 -right-1 bg-cyan-400 w-3 h-3 rounded-full border-2 border-neutral-950" />
         </button>
       )}
 
       {/* Expanded Active Support Window */}
       {isOpen && (
-        <div className="w-[340px] sm:w-[380px] h-[500px] bg-white rounded-3xl border border-slate-200/80 shadow-2xl overflow-hidden flex flex-col animate-fade-in relative">
+        <div className="w-[340px] sm:w-[380px] h-[500px] bg-neutral-950 rounded-3xl border border-neutral-900 shadow-2xl overflow-hidden flex flex-col animate-fade-in relative text-neutral-200">
           
           {/* Header */}
-          <div className="bg-slate-900 text-slate-150 p-4 px-5 flex justify-between items-center">
+          <div className="bg-neutral-900 text-neutral-300 p-4 px-5 flex justify-between items-center border-b border-neutral-850">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center">
-                <HeartPulse className="w-5 h-5 text-white" />
+              <div className="w-8.5 h-8.5 bg-neutral-950 rounded-xl flex items-center justify-center border border-neutral-800">
+                <HeartPulse className="w-4.5 h-4.5 text-cyan-400 animate-pulse" />
               </div>
               <div>
                 <h3 className="font-semibold text-xs text-white uppercase tracking-wider font-mono">Support Concierge</h3>
-                <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-sans mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <div className="flex items-center gap-1.5 text-[10px] text-cyan-400 font-sans mt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                   Helpdesk Live
                 </div>
               </div>
@@ -205,23 +204,23 @@ export default function ChatSupport() {
             
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition cursor-pointer"
+              className="p-1 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {/* Body */}
-          <div className="flex-1 bg-slate-50/50 p-4 overflow-y-auto space-y-4 flex flex-col justify-between">
+          <div className="flex-1 bg-neutral-950 p-4 overflow-y-auto space-y-4 flex flex-col justify-between">
             {!isNameRegistered ? (
               // Stage A: Register Name before Messaging
               <div className="my-auto space-y-4 px-2 text-center animate-fade-in">
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-full w-12 h-12 flex items-center justify-center mx-auto border border-blue-100">
+                <div className="p-3 bg-neutral-900 text-cyan-400 rounded-full w-12 h-12 flex items-center justify-center mx-auto border border-neutral-800">
                   <User className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Introduce Yourself</h4>
-                  <p className="text-[11px] text-slate-400">Please provide your name to start a live discussion with the Shifa clinical support executives.</p>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Introduce Yourself</h4>
+                  <p className="text-[11px] text-neutral-500 leading-relaxed">Please provide your name to start a live discussion with the Shifa clinical support executives.</p>
                 </div>
                 <form onSubmit={handleRegisterName} className="space-y-2.5">
                   <input
@@ -231,11 +230,11 @@ export default function ChatSupport() {
                     placeholder="e.g. John Doe"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
-                    className="w-full text-center rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-xs outline-none focus:border-blue-500 transition-all font-sans"
+                    className="w-full text-center rounded-2xl border border-neutral-900 bg-neutral-900 px-4 py-2.5 text-xs text-white outline-none focus:border-cyan-400 transition-all font-sans placeholder:text-neutral-600"
                   />
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-semibold tracking-wider uppercase rounded-full cursor-pointer transition shadow-xs"
+                    className="w-full py-2.5 bg-white hover:bg-neutral-100 text-black text-[11px] font-extrabold tracking-wider uppercase rounded-full cursor-pointer transition shadow-sm"
                   >
                     Connect with Support desk
                   </button>
@@ -250,10 +249,10 @@ export default function ChatSupport() {
                   {/* Automated Initial Helper Welcome message if empty */}
                   {messages.length === 0 && (
                     <div className="flex gap-2">
-                      <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-300 font-semibold shrink-0 uppercase">
+                      <div className="w-6 h-6 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-[10px] text-cyan-400 font-semibold shrink-0 uppercase">
                         S
                       </div>
-                      <div className="bg-slate-100 text-slate-800 p-2.5 rounded-2xl rounded-tl-none max-w-[80%]">
+                      <div className="bg-neutral-900 text-neutral-300 p-2.5 rounded-2xl rounded-tl-none max-w-[80%] border border-neutral-850">
                         Hello {patientName}! Our team is online. Drop a message regarding booking availability, pricing, or emergency procedures, and an executive will reply shortly.
                       </div>
                     </div>
@@ -264,17 +263,17 @@ export default function ChatSupport() {
                     return (
                       <div key={m.id} className={`flex gap-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
                         {!isMe && (
-                          <div className="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-[8px] text-slate-300 font-bold shrink-0 uppercase font-mono">
+                          <div className="w-6 h-6 rounded-full bg-neutral-900 border border-neutral-850 flex items-center justify-center text-[8px] text-cyan-400 font-bold shrink-0 uppercase font-mono">
                             OPD
                           </div>
                         )}
                         <div className={`p-2.5 rounded-2xl max-w-[80%] break-words ${
                           isMe 
-                            ? 'bg-blue-600 text-white rounded-tr-none text-right' 
-                            : 'bg-white border select-all border-slate-200 text-slate-800 rounded-tl-none text-left'
+                            ? 'bg-neutral-900 text-white rounded-tr-none text-right border border-neutral-800' 
+                            : 'bg-neutral-900 text-cyan-400 rounded-tl-none text-left border border-cyan-451 border-cyan-950/40'
                         }`}>
                           <p className="leading-relaxed">{m.message}</p>
-                          <span className={`block text-[8px] mt-1 ${isMe ? 'text-blue-200' : 'text-slate-400'} font-mono`}>
+                          <span className={`block text-[8px] mt-1 ${isMe ? 'text-neutral-500' : 'text-cyan-600'} font-mono`}>
                             {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -285,20 +284,20 @@ export default function ChatSupport() {
                 </div>
 
                 {/* Chat Input form */}
-                <form onSubmit={handleSendMessage} className="pt-3 border-t border-slate-100 flex gap-2">
+                <form onSubmit={handleSendMessage} className="pt-3 border-t border-neutral-900 flex gap-2 bg-neutral-950">
                   <input
                     type="text"
                     required
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder="Type a message here..."
-                    className="flex-1 text-xs rounded-full border border-slate-200 bg-white px-4 py-2.5 outline-none focus:border-blue-500 transition-all font-sans"
+                    className="flex-1 text-xs rounded-full border border-neutral-900 bg-neutral-900 px-4 py-2.5 text-white outline-none focus:border-cyan-400 transition-all font-sans placeholder:text-neutral-600"
                   />
                   <button
                     type="submit"
-                    className="p-2.5 bg-blue-605 hover:bg-blue-700 bg-blue-600 text-white rounded-full flex items-center justify-center shrink-0 cursor-pointer transition"
+                    className="p-2.5 bg-white hover:bg-neutral-100 text-black rounded-full flex items-center justify-center shrink-0 cursor-pointer transition shadow-sm"
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-3.5 h-3.5 text-black font-extrabold" />
                   </button>
                 </form>
               </div>
