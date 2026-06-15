@@ -12,9 +12,10 @@ interface AppointmentFormProps {
   preselectedDoctor: Doctor | null;
   onAppointmentBooked: (appointment: Appointment) => void;
   onCancel: () => void;
+  patientUser: { name: string; email: string; phone: string; isSaved: boolean } | null;
 }
 
-export default function AppointmentForm({ preselectedDoctor, onAppointmentBooked, onCancel }: AppointmentFormProps) {
+export default function AppointmentForm({ preselectedDoctor, onAppointmentBooked, onCancel, patientUser }: AppointmentFormProps) {
   // Current date for min-date validation (formatted as YYYY-MM-DD)
   const todayStr = new Date().toISOString().split('T')[0];
   
@@ -38,6 +39,15 @@ export default function AppointmentForm({ preselectedDoctor, onAppointmentBooked
   const [patientPhone, setPatientPhone] = useState<string>('');
   const [patientEmail, setPatientEmail] = useState<string>('');
   const [symptoms, setSymptoms] = useState<string>('');
+
+  // Prefill registration details from active logged-in check-in session
+  useEffect(() => {
+    if (patientUser) {
+      setPatientName(patientUser.name || '');
+      setPatientPhone(patientUser.phone || '');
+      setPatientEmail(patientUser.email || '');
+    }
+  }, [patientUser]);
 
   // UI Flow State
   const [step, setStep] = useState<number>(1); // 1: Consultation Details, 2: Patient Demographics, 3: Success Confirmation
@@ -107,7 +117,19 @@ export default function AppointmentForm({ preselectedDoctor, onAppointmentBooked
       setValidationError('Please enter a valid age between 1 and 120.');
       return;
     }
-    if (!patientPhone.trim() || patientPhone.trim().length < 8) {
+
+    const hasPhone = patientPhone.trim().length >= 8;
+    const hasEmail = patientEmail.trim().length > 0;
+
+    if (!hasPhone && !hasEmail) {
+      setValidationError('Either Email or Phone number is required to book a session.');
+      return;
+    }
+
+    if (hasEmail && !hasPhone) {
+      // Allow booking but warn it won't be saved in database!
+      console.log("Allowing booking without phone number (email-only user) - will skip backend save");
+    } else if (!hasPhone) {
       setValidationError('Please enter a valid, reachable mobile number.');
       return;
     }
@@ -334,6 +356,11 @@ export default function AppointmentForm({ preselectedDoctor, onAppointmentBooked
         {/* STEP 2: PATIENT DEMOGRAPHICS */}
         {step === 2 && (
           <form onSubmit={handleFormSubmit} className="space-y-5">
+            {patientEmail && (!patientPhone || patientPhone.trim() === "") && (
+              <div className="p-4 bg-amber-50 border border-amber-250 text-amber-900 rounded-2xl text-[11px] leading-relaxed">
+                ⚠️ <strong>Email-Only Session Warning:</strong> Since you only entered an email and left the mobile number blank, your appointment register and OPD ticket <strong>will NOT be saved to our database system</strong>. Cloud storage requires both a phone number and an email.
+              </div>
+            )}
             <div className="bg-blue-50/20 p-4 rounded-2xl border border-blue-100/30 text-[11px] text-slate-600 leading-relaxed flex gap-2.5">
               <Sparkles className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
               <div>

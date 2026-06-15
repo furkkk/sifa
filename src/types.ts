@@ -58,5 +58,7 @@ export interface ChatMessage {
   patientName: string;
   message: string;
   createdAt: string;
+  patientPhone?: string;
+  patientEmail?: string;
 }
 

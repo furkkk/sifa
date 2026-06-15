@@ -22,19 +22,42 @@ export default function ChatSupport() {
   // Load chat session on mount
   useEffect(() => {
     let savedSession = localStorage.getItem('shifa_chat_session');
-    let savedName = localStorage.getItem('shifa_chat_name');
-
+    
     if (!savedSession) {
       savedSession = 'client-' + Math.random().toString(36).substring(2, 11);
       localStorage.setItem('shifa_chat_session', savedSession);
     }
-    
     setSessionId(savedSession);
-    
-    if (savedName) {
-      setPatientName(savedName);
-      setIsNameRegistered(true);
-    }
+
+    const syncFromPatientUser = () => {
+      const pUserStr = localStorage.getItem('shifa_patient_user');
+      if (pUserStr) {
+        try {
+          const user = JSON.parse(pUserStr);
+          if (user && user.name) {
+            setPatientName(user.name);
+            setIsNameRegistered(true);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      let savedName = localStorage.getItem('shifa_chat_name');
+      if (savedName) {
+        setPatientName(savedName);
+        setIsNameRegistered(true);
+      } else {
+        setIsNameRegistered(false);
+      }
+    };
+
+    syncFromPatientUser();
+
+    // Listen to storage changes to sync immediately
+    window.addEventListener('storage', syncFromPatientUser);
+    return () => {
+      window.removeEventListener('storage', syncFromPatientUser);
+    };
   }, []);
 
   // Poll messages every 3 seconds when chat is open
@@ -80,6 +103,14 @@ export default function ChatSupport() {
     setPatientName(trimmed);
     setIsNameRegistered(true);
 
+    const dummyUser = { 
+      name: trimmed, 
+      email: trimmed.toLowerCase().replace(/\s+/g, '') + '@clinicalsupport.com', 
+      phone: '', 
+      isSaved: false 
+    };
+    localStorage.setItem('shifa_patient_user', JSON.stringify(dummyUser));
+
     // Send a system greeting/trigger
     const initMessage: ChatMessage = {
       id: 'msg-start-' + Date.now(),
@@ -109,13 +140,26 @@ export default function ChatSupport() {
     e.preventDefault();
     if (!text.trim()) return;
 
+    let phone = "";
+    let email = "";
+    const pUserStr = localStorage.getItem('shifa_patient_user');
+    if (pUserStr) {
+      try {
+        const pUser = JSON.parse(pUserStr);
+        phone = pUser.phone || "";
+        email = pUser.email || "";
+      } catch (e) {}
+    }
+
     const newMsg: ChatMessage = {
       id: 'msg-' + Math.random().toString(36).substring(2, 11) + '-' + Date.now(),
       sender: 'patient',
       patientSessionId: sessionId,
       patientName: patientName || 'Patient',
       message: text.trim(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      patientPhone: phone,
+      patientEmail: email
     };
 
     // Optimistic state

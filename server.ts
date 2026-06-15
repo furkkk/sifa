@@ -264,8 +264,17 @@ app.post('/api/chats', async (req, res) => {
     patientSessionId: msg.patientSessionId,
     patientName: msg.patientName || 'Anonymous Patient',
     message: msg.message,
-    createdAt: msg.createdAt || new Date().toISOString()
+    createdAt: msg.createdAt || new Date().toISOString(),
+    patientPhone: msg.patientPhone,
+    patientEmail: msg.patientEmail
   };
+
+  const isEmailOnly = fullMsg.patientEmail && (!fullMsg.patientPhone || fullMsg.patientPhone.trim() === "");
+
+  if (isEmailOnly) {
+    console.warn("Skipping chat save because user only provided email & no phone number:", fullMsg.patientName);
+    return res.json({ ...fullMsg, warning: "Chat message transient - not saved in backend DB (phone missing)" });
+  }
 
   chatsCache.push(fullMsg);
   fs.writeFileSync(LOCAL_CHATS_FILE, JSON.stringify(chatsCache, null, 2));
@@ -324,6 +333,9 @@ function formatAppointment(row: any) {
 
 // API: Get Appointments
 app.get('/api/appointments', async (req, res) => {
+  const { email } = req.query;
+  const emailStr = email ? String(email).trim().toLowerCase() : "";
+
   try {
     // Attempt load from Supabase
     const { data, error } = await supabase
@@ -333,7 +345,11 @@ app.get('/api/appointments', async (req, res) => {
 
     if (error) {
       console.warn("Supabase load error, falling back to local files:", error.message);
-      return res.json(appointmentsCache);
+      let results = [...appointmentsCache];
+      if (emailStr) {
+        results = results.filter(apt => apt.patientEmail && apt.patientEmail.toLowerCase().trim() === emailStr);
+      }
+      return res.json(results);
     }
 
     if (data && data.length > 0) {
@@ -341,14 +357,27 @@ app.get('/api/appointments', async (req, res) => {
       // Synchronize cache
       appointmentsCache = formatted;
       fs.writeFileSync(LOCAL_APTS_FILE, JSON.stringify(appointmentsCache, null, 2));
-      return res.json(formatted);
+      
+      let results = formatted;
+      if (emailStr) {
+        results = results.filter(apt => apt.patientEmail && apt.patientEmail.toLowerCase().trim() === emailStr);
+      }
+      return res.json(results);
     } else {
       // If table is successfully queried but completely empty, populate with initial backup
-      return res.json(appointmentsCache);
+      let results = [...appointmentsCache];
+      if (emailStr) {
+        results = results.filter(apt => apt.patientEmail && apt.patientEmail.toLowerCase().trim() === emailStr);
+      }
+      return res.json(results);
     }
   } catch (err) {
     console.warn("Unhandled get appointments error - returning local cache:", err);
-    return res.json(appointmentsCache);
+    let results = [...appointmentsCache];
+    if (emailStr) {
+      results = results.filter(apt => apt.patientEmail && apt.patientEmail.toLowerCase().trim() === emailStr);
+    }
+    return res.json(results);
   }
 });
 
@@ -357,6 +386,18 @@ app.post('/api/appointments', async (req, res) => {
   const apt = req.body;
   if (!apt.id || !apt.patientName) {
     return res.status(400).json({ error: "Invalid appointment payload." });
+  }
+
+  const isEmailOnly = apt.patientEmail && (!apt.patientPhone || apt.patientPhone.trim() === "");
+
+  if (isEmailOnly) {
+    console.warn("Skipping appointment persistence because user only provided email & no phone:", apt.patientName);
+    // Return the ticket but with a warning, and do not save in filesystem or Supabase DB
+    return res.json({ 
+      ...apt, 
+      warning: "Appointment active on browser, but not persisted on database (phone missing)",
+      notSaved: true 
+    });
   }
 
   // Backup locally first

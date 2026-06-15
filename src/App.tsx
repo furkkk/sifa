@@ -33,11 +33,102 @@ const SpecialtyIcon = ({ name, className }: { name: string; className?: string }
   }
 };
 
+// Multi-use Patient check-in component supporting both email and optional phone warnings
+function PatientCheckinForm({ onLogin }: { onLogin: (name: string, email: string, phone: string) => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  
+  const hasEmail = email.includes('@') && email.trim().length > 3;
+  const hasPhone = phone.trim().length >= 8;
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    if (!email.trim() || !email.includes('@')) return;
+    onLogin(name, email, phone);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 text-left font-sans">
+      <div className="space-y-1.5">
+        <label className="block text-[10px] font-mono tracking-wider uppercase text-slate-400 font-bold">Your Full Name (मरीज़ का नाम)</label>
+        <input 
+          type="text" 
+          required
+          placeholder="e.g. Rahul Sharma"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-xs text-slate-850 outline-none focus:border-blue-500 bg-white"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-[10px] font-mono tracking-wider uppercase text-slate-400 font-bold">Email Address (ईमेल)</label>
+        <input 
+          type="email" 
+          required
+          placeholder="e.g. rahul@gmail.com"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-xs text-slate-850 outline-none focus:border-blue-500 bg-white"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="block text-[10px] font-mono tracking-wider uppercase text-slate-400 font-bold flex justify-between">
+          <span>Mobile Phone Number (मोबाइल नंबर)</span>
+          <span className="text-[10px] text-amber-600 font-semibold normal-case">Required for cloud records</span>
+        </label>
+        <input 
+          type="tel" 
+          placeholder="e.g. +91 99887 76655"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-xs text-slate-850 outline-none focus:border-blue-500 bg-white"
+        />
+      </div>
+
+      {hasEmail ? (
+        !hasPhone ? (
+          <div className="p-3.5 bg-amber-50/65 border border-amber-200 text-amber-800 rounded-2xl text-[10.5px] leading-relaxed select-none animate-pulse">
+            ⚠️ <strong>Email-Only warn:</strong> Your email will represent your clinical identity, but since you left the phone number empty, <strong>your tickets and support chats will NOT be saved persistently in the database records</strong>. Mobile number is mandatory for database storage.
+          </div>
+        ) : (
+          <div className="p-3.5 bg-emerald-55/40 bg-emerald-50 border border-emerald-250 text-emerald-800 rounded-2xl text-[10.5px] leading-relaxed select-none">
+            ✓ <strong>Cloud Sync Activated:</strong> Mobile and email provided. Your consultation registers and helpdesk chats will be securely saved to backend database storage.
+          </div>
+        )
+      ) : null}
+
+      <button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-750 bg-blue-600 text-white hover:bg-blue-700 text-xs font-semibold py-3 rounded-full cursor-pointer transition shadow-md shadow-blue-500/15 uppercase tracking-wider text-center"
+      >
+        Check-In Session
+      </button>
+    </form>
+  );
+}
+
 export default function App() {
   // Navigation active state
   // 'home' | 'appointments' | 'book' | 'admin'
   const [activeTab, setActiveTab ] = useState<string>('home');
   const [selectedDoctorForBooking, setSelectedDoctorForBooking] = useState<Doctor | null>(null);
+
+  // Patient User state retrieved from localStorage
+  const [patientUser, setPatientUser] = useState<{ name: string; email: string; phone: string; isSaved: boolean } | null>(() => {
+    const saved = localStorage.getItem('shifa_patient_user');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
 
   // App State - Appointments list pulled from DB backend API with local cache
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -49,7 +140,11 @@ export default function App() {
   // Fetch appointments from DB
   const fetchAppointments = async () => {
     try {
-      const res = await fetch('/api/appointments');
+      let url = '/api/appointments';
+      if (patientUser?.email) {
+        url += `?email=${encodeURIComponent(patientUser.email)}`;
+      }
+      const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
         setAppointments(data);
@@ -59,22 +154,43 @@ export default function App() {
     } catch (err) {
       console.warn("Could not load backend appointments - falling back to client localStorage:", err);
       const saved = localStorage.getItem('shifa_appointments');
+      let displayApts = INITIAL_APPOINTMENTS;
       if (saved) {
         try {
-          setAppointments(JSON.parse(saved));
+          displayApts = JSON.parse(saved);
         } catch (e) {
-          setAppointments(INITIAL_APPOINTMENTS);
+          displayApts = INITIAL_APPOINTMENTS;
         }
-      } else {
-        setAppointments(INITIAL_APPOINTMENTS);
-        localStorage.setItem('shifa_appointments', JSON.stringify(INITIAL_APPOINTMENTS));
       }
+      // Apply offline fallback email filtering
+      if (patientUser?.email) {
+        displayApts = displayApts.filter(apt => apt.patientEmail && apt.patientEmail.toLowerCase().trim() === patientUser.email.toLowerCase().trim());
+      }
+      setAppointments(displayApts);
     }
   };
 
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [patientUser?.email]);
+
+  const handlePatientLogin = (name: string, email: string, phone: string) => {
+    const hasPhone = phone && phone.trim().length >= 8;
+    const isSaved = !!hasPhone;
+    const user = { name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), isSaved };
+    setPatientUser(user);
+    localStorage.setItem('shifa_patient_user', JSON.stringify(user));
+    localStorage.setItem('shifa_chat_name', user.name);
+    // Dispatches custom event to notify target components
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const handlePatientLogout = () => {
+    setPatientUser(null);
+    localStorage.removeItem('shifa_patient_user');
+    localStorage.removeItem('shifa_chat_name');
+    window.dispatchEvent(new Event('storage'));
+  };
 
   // Add Appointment
   const handleAddAppointment = async (newApt: Appointment) => {
@@ -177,6 +293,74 @@ export default function App() {
       {/* 2. CHOOSE CURRENT MAIN VIEW */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-12">
         
+        {/* Patient Register/Check-in banner */}
+        {patientUser ? (
+          <div className="bg-white border border-slate-205 border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
+                <Smile className="w-5.5 h-5.5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[9px] font-mono uppercase tracking-wider text-slate-400 font-bold">Checked-in Patient Session</p>
+                <div className="flex items-center gap-2">
+                  <h4 className="font-sans font-bold text-sm text-slate-800">{patientUser.name}</h4>
+                  {patientUser.isSaved ? (
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-55 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-semibold border border-emerald-100">
+                      Sync Enabled
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-750 text-amber-700 rounded-full text-[9px] font-semibold border border-amber-105 animate-pulse">
+                      Not Saved (Email only)
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 font-sans">
+                  {patientUser.email} {patientUser.phone ? `| ${patientUser.phone}` : ''}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => {
+                  setActiveTab('appointments');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-full shadow-xs cursor-pointer transition"
+              >
+                My OPD Tickets
+              </button>
+              <button
+                onClick={handlePatientLogout}
+                className="px-4 py-2 border border-slate-205 border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold rounded-full cursor-pointer transition"
+              >
+                Sign Out
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-gradient-to-r from-blue-50/40 to-indigo-50/20 border border-slate-205 border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+            <div className="space-y-1">
+              <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-wide uppercase font-semibold font-mono">
+                Patient Self Check-In
+              </span>
+              <h4 className="font-sans font-bold text-base text-slate-900 tracking-tight">Check-In With Email and Phone Prior to OPD Booking</h4>
+              <p className="text-[11px] text-slate-500 leading-relaxed max-w-2xl font-sans">
+                Please register your session. This ensures clinical helpdesk tickets can search and store chats and queue slots securely.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setActiveTab('book');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-xs cursor-pointer transition shrink-0"
+            >
+              Sign In / Session Check-In
+            </button>
+          </div>
+        )}
+
         {/* VIEW A: HOME - CLINIC GENERAL PORTAL */}
         {activeTab === 'home' && (
           <div className="space-y-12">
@@ -449,45 +633,92 @@ export default function App() {
         {/* VIEW B: BOOKING SLIP FORM */}
         {activeTab === 'book' && (
           <div className="space-y-6">
-            <button
-              onClick={() => handleInitiateBooking(null)}
-              className="text-xs text-slate-500 hover:text-blue-600 font-semibold cursor-pointer flex items-center gap-1 mb-2 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-xs"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              Reset Form Selection
-            </button>
-            <AppointmentForm 
-              preselectedDoctor={selectedDoctorForBooking}
-              onAppointmentBooked={handleAddAppointment}
-              onCancel={() => {
-                setSelectedDoctorForBooking(null);
-                setActiveTab('home');
-              }}
-            />
+            {!patientUser ? (
+              <div className="max-w-md mx-auto bg-white border border-slate-200/90 shadow-xl rounded-3xl p-6 sm:p-8 space-y-6 text-center">
+                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto border border-blue-100">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-sans font-bold text-lg text-slate-900">Check-In Session Required</h3>
+                  <p className="text-xs text-slate-500 leading-normal max-w-xs mx-auto">
+                    Please establish your clinical check-in desk session first to prepare your digital queue token slips.
+                  </p>
+                </div>
+                <PatientCheckinForm onLogin={handlePatientLogin} />
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className="text-xs text-slate-500 hover:text-slate-800 font-semibold cursor-pointer block mx-auto pt-2"
+                >
+                  ← Return to Doctor Hub
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleInitiateBooking(null)}
+                  className="text-xs text-slate-500 hover:text-blue-600 font-semibold cursor-pointer flex items-center gap-1 mb-2 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-xs"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  Reset Form Selection
+                </button>
+                <AppointmentForm 
+                  preselectedDoctor={selectedDoctorForBooking}
+                  onAppointmentBooked={handleAddAppointment}
+                  onCancel={() => {
+                    setSelectedDoctorForBooking(null);
+                    setActiveTab('home');
+                  }}
+                  patientUser={patientUser}
+                />
+              </>
+            )}
           </div>
         )}
 
         {/* VIEW C: APPOINTMENT list DASHBOARD TICKETS */}
         {activeTab === 'appointments' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-slate-900 text-white p-6 rounded-3xl border border-slate-950">
-              <div>
-                <h2 className="font-sans font-semibold text-lg sm:text-xl tracking-tight">Active OPD Registers</h2>
-                <p className="text-xs text-slate-400 mt-1 font-sans">Confirm your active queue position and download printer receipts.</p>
+            {!patientUser ? (
+              <div className="max-w-md mx-auto bg-white border border-slate-200/90 shadow-xl rounded-3xl p-6 sm:p-8 space-y-6 text-center">
+                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto border border-blue-100">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-sans font-bold text-lg text-slate-900">Patient Register Lookup</h3>
+                  <p className="text-xs text-slate-500 leading-normal max-w-xs mx-auto">
+                    Check-in with your email address to instantly query and monitor your active OPD queue registers.
+                  </p>
+                </div>
+                <PatientCheckinForm onLogin={handlePatientLogin} />
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className="text-xs text-slate-500 hover:text-slate-800 font-semibold cursor-pointer block mx-auto pt-2"
+                >
+                  ← Return to Doctor Hub
+                </button>
               </div>
-              <button
-                onClick={() => setActiveTab('home')}
-                className="text-xs bg-white text-slate-900 font-semibold px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
-              >
-                Go to Doctor Hub
-              </button>
-            </div>
+            ) : (
+              <>
+                <div className="flex justify-between items-center bg-slate-900 text-white p-6 rounded-3xl border border-slate-950">
+                  <div>
+                    <h2 className="font-sans font-semibold text-lg sm:text-xl tracking-tight">Active OPD Registers</h2>
+                    <p className="text-xs text-slate-400 mt-1 font-sans">Active queue tickets retrieved for {patientUser.email}.</p>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('home')}
+                    className="text-xs bg-white text-slate-900 font-semibold px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                  >
+                    Go to Doctor Hub
+                  </button>
+                </div>
 
-            <AppointmentList 
-              appointments={appointments}
-              onCancelAppointment={handleCancelAppointment}
-              onBookNewClick={() => handleInitiateBooking(null)}
-            />
+                <AppointmentList 
+                  appointments={appointments}
+                  onCancelAppointment={handleCancelAppointment}
+                  onBookNewClick={() => handleInitiateBooking(null)}
+                />
+              </>
+            )}
           </div>
         )}
 
