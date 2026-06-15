@@ -175,7 +175,7 @@ export default function App() {
       />
 
       {/* 2. CHOOSE CURRENT MAIN VIEW */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-10 py-8 md:py-12 space-y-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-12">
         
         {/* VIEW A: HOME - CLINIC GENERAL PORTAL */}
         {activeTab === 'home' && (
@@ -505,7 +505,7 @@ export default function App() {
       </main>
 
       {/* 3. UNIVERSAL FOOTER */}
-      <footer className="bg-slate-950 border-t border-slate-900 text-slate-400 pt-16 pb-10 px-10 mt-16">
+      <footer className="bg-slate-950 border-t border-slate-900 text-slate-400 pt-16 pb-10 px-4 sm:px-6 lg:px-8 mt-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-850 text-xs sm:text-sm">
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">

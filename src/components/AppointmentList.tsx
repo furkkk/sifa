@@ -162,7 +162,7 @@ export default function AppointmentList({ appointments, onCancelAppointment, onB
         /* NORMAL APPOINTMENTS LISTING */
         <div className="space-y-6">
           {/* 1. Statistics Cards Dashboard Dashboard */}
-          <div className="grid grid-cols-3 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
             <div className="bg-white border border-slate-200 rounded-3xl p-4.5 shadow-xs">
               <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Total Tickets</span>
               <p className="font-sans font-semibold text-2xl text-slate-800 mt-0.5">{totalBooked}</p>
