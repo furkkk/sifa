@@ -269,13 +269,6 @@ app.post('/api/chats', async (req, res) => {
     patientEmail: msg.patientEmail
   };
 
-  const isEmailOnly = fullMsg.patientEmail && (!fullMsg.patientPhone || fullMsg.patientPhone.trim() === "");
-
-  if (isEmailOnly) {
-    console.warn("Skipping chat save because user only provided email & no phone number:", fullMsg.patientName);
-    return res.json({ ...fullMsg, warning: "Chat message transient - not saved in backend DB (phone missing)" });
-  }
-
   chatsCache.push(fullMsg);
   fs.writeFileSync(LOCAL_CHATS_FILE, JSON.stringify(chatsCache, null, 2));
 
@@ -386,18 +379,6 @@ app.post('/api/appointments', async (req, res) => {
   const apt = req.body;
   if (!apt.id || !apt.patientName) {
     return res.status(400).json({ error: "Invalid appointment payload." });
-  }
-
-  const isEmailOnly = apt.patientEmail && (!apt.patientPhone || apt.patientPhone.trim() === "");
-
-  if (isEmailOnly) {
-    console.warn("Skipping appointment persistence because user only provided email & no phone:", apt.patientName);
-    // Return the ticket but with a warning, and do not save in filesystem or Supabase DB
-    return res.json({ 
-      ...apt, 
-      warning: "Appointment active on browser, but not persisted on database (phone missing)",
-      notSaved: true 
-    });
   }
 
   // Backup locally first

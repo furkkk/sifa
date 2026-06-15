@@ -107,7 +107,7 @@ export default function ChatSupport() {
       name: trimmed, 
       email: trimmed.toLowerCase().replace(/\s+/g, '') + '@clinicalsupport.com', 
       phone: '', 
-      isSaved: false 
+      isSaved: true 
     };
     localStorage.setItem('shifa_patient_user', JSON.stringify(dummyUser));
 

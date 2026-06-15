@@ -91,8 +91,8 @@ function PatientCheckinForm({ onLogin }: { onLogin: (name: string, email: string
 
       {hasEmail ? (
         !hasPhone ? (
-          <div className="p-3.5 bg-amber-50/65 border border-amber-200 text-amber-800 rounded-2xl text-[10.5px] leading-relaxed select-none animate-pulse">
-            ⚠️ <strong>Email-Only warn:</strong> Your email will represent your clinical identity, but since you left the phone number empty, <strong>your tickets and support chats will NOT be saved persistently in the database records</strong>. Mobile number is mandatory for database storage.
+          <div className="p-3.5 bg-emerald-50 border border-emerald-250 text-emerald-800 rounded-2xl text-[10.5px] leading-relaxed select-none">
+            ✓ <strong>Cloud Sync Activated (Email Only):</strong> Your email will represent your clinical identity. Your tickets and support chats will be securely saved persistently in the database records.
           </div>
         ) : (
           <div className="p-3.5 bg-emerald-55/40 bg-emerald-50 border border-emerald-250 text-emerald-800 rounded-2xl text-[10.5px] leading-relaxed select-none">
@@ -175,9 +175,7 @@ export default function App() {
   }, [patientUser?.email]);
 
   const handlePatientLogin = (name: string, email: string, phone: string) => {
-    const hasPhone = phone && phone.trim().length >= 8;
-    const isSaved = !!hasPhone;
-    const user = { name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), isSaved };
+    const user = { name: name.trim(), email: email.trim().toLowerCase(), phone: phone.trim(), isSaved: true };
     setPatientUser(user);
     localStorage.setItem('shifa_patient_user', JSON.stringify(user));
     localStorage.setItem('shifa_chat_name', user.name);
