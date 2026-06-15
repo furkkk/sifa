@@ -280,7 +280,7 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900 font-sans antialiased text-slate-800">
+    <div className="min-h-screen bg-[#070b14] flex flex-col justify-between selection:bg-cyan-500/30 selection:text-cyan-200 font-sans antialiased text-slate-200">
       
       {/* 1. TOP HEADER & NAVBAR */}
       <Header 
@@ -295,26 +295,26 @@ export default function App() {
         
         {/* Patient Register/Check-in banner */}
         {patientUser ? (
-          <div className="bg-white border border-slate-205 border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
+          <div className="bg-[#0b1329]/80 border border-slate-800/85 rounded-3xl p-5 shadow-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
-                <Smile className="w-5.5 h-5.5" />
+              <div className="p-3 bg-cyan-950/50 text-cyan-400 rounded-2xl flex items-center justify-center shrink-0 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                <Smile className="w-5.5 h-5.5 animate-bounce text-cyan-400" />
               </div>
               <div className="space-y-0.5">
-                <p className="text-[9px] font-mono uppercase tracking-wider text-slate-400 font-bold">Checked-in Patient Session</p>
+                <p className="text-[9px] font-mono uppercase tracking-wider text-cyan-400 font-bold">Checked-in Patient Session</p>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-sans font-bold text-sm text-slate-800">{patientUser.name}</h4>
+                  <h4 className="font-sans font-bold text-sm text-white">{patientUser.name}</h4>
                   {patientUser.isSaved ? (
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-55 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-semibold border border-emerald-100">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-emerald-950/40 text-emerald-400 rounded-full text-[9px] font-semibold border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
                       Sync Enabled
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-750 text-amber-700 rounded-full text-[9px] font-semibold border border-amber-105 animate-pulse">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-950/40 text-amber-400 rounded-full text-[9px] font-semibold border border-amber-500/20 animate-pulse">
                       Not Saved (Email only)
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-slate-500 font-sans">
+                <p className="text-[11px] text-slate-400 font-sans font-medium">
                   {patientUser.email} {patientUser.phone ? `| ${patientUser.phone}` : ''}
                 </p>
               </div>
@@ -326,26 +326,26 @@ export default function App() {
                   setActiveTab('appointments');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-full shadow-xs cursor-pointer transition"
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold rounded-full shadow-lg shadow-cyan-500/10 cursor-pointer transition border border-cyan-400/25"
               >
                 My OPD Tickets
               </button>
               <button
                 onClick={handlePatientLogout}
-                className="px-4 py-2 border border-slate-205 border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-semibold rounded-full cursor-pointer transition"
+                className="px-4 py-2 border border-slate-800 hover:bg-slate-900 text-slate-350 hover:text-white text-xs font-bold rounded-full cursor-pointer transition animate-fade-in"
               >
                 Sign Out
               </button>
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-blue-50/40 to-indigo-50/20 border border-slate-205 border-slate-200 rounded-3xl p-5 shadow-xs flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+          <div className="bg-gradient-to-r from-slate-950 via-[#0e172e] to-slate-950 border border-slate-800/80 rounded-3xl p-5 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-5 relative overflow-hidden">
             <div className="space-y-1">
-              <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-wide uppercase font-semibold font-mono">
+              <span className="inline-flex items-center gap-1 bg-cyan-950 text-cyan-300 border border-cyan-800 px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-wide uppercase font-bold">
                 Patient Self Check-In
               </span>
-              <h4 className="font-sans font-bold text-base text-slate-900 tracking-tight">Check-In With Email and Phone Prior to OPD Booking</h4>
-              <p className="text-[11px] text-slate-500 leading-relaxed max-w-2xl font-sans">
+              <h4 className="font-sans font-bold text-base text-white tracking-tight">Check-In With Email and Phone Prior to OPD Booking</h4>
+              <p className="text-[11px] text-slate-400 leading-relaxed max-w-2xl font-sans">
                 Please register your session. This ensures clinical helpdesk tickets can search and store chats and queue slots securely.
               </p>
             </div>
@@ -354,7 +354,7 @@ export default function App() {
                 setActiveTab('book');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-5 py-2.5 rounded-full shadow-xs cursor-pointer transition shrink-0"
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-455 hover:to-blue-555 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-lg shadow-cyan-500/15 border border-cyan-400/25 cursor-pointer transition shrink-0"
             >
               Sign In / Session Check-In
             </button>
@@ -366,33 +366,33 @@ export default function App() {
           <div className="space-y-12">
             
             {/* Elegant Hero Slider section with Urdu/Hindi easy guide banner */}
-            <section className="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 rounded-3xl p-6 sm:p-10 lg:p-14 text-white relative overflow-hidden border border-slate-800 shadow-md">
+            <section className="bg-gradient-to-br from-[#0c142b] via-[#05080f] to-[#0b1329] rounded-3xl p-6 sm:p-10 lg:p-14 text-white relative overflow-hidden border border-slate-800 shadow-3xl">
               {/* Absolutes decorative blobs */}
-              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500 rounded-full mix-blend-screen filter blur-3xl opacity-5 -mr-20 -mt-20"></div>
-              <div className="absolute bottom-0 left-0 w-80 h-80 bg-slate-550 rounded-full mix-blend-screen filter blur-3xl opacity-5 -ml-20 -mb-20"></div>
+              <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-10 -mr-20 -mt-20 animate-pulse"></div>
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-600 rounded-full mix-blend-screen filter blur-3xl opacity-10 -ml-20 -mb-20"></div>
 
-              <div className="max-w-3xl space-y-6 relative z-10">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full text-xs font-mono tracking-wider uppercase border border-blue-500/20 font-semibold">
-                  <Sparkle className="w-3.5 h-3.5 text-blue-400" />
+              <div className="max-w-3xl space-y-6 relative z-10 text-left">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-500/10 text-cyan-300 rounded-full text-xs font-mono tracking-wider uppercase border border-cyan-500/20 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.1)]">
+                  <Sparkle className="w-3.5 h-3.5 text-cyan-400" />
                   Live Digital Appointment Portal - 2026
                 </span>
 
-                <h2 className="font-sans font-semibold text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight">
+                <h2 className="font-sans font-extrabold text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-white">
                   Expert Clinicians. <br />
-                  <span className="text-blue-400">Zero Wait Lobby Counter.</span>
+                  <span className="bg-gradient-to-r from-cyan-400 via-teal-300 to-blue-500 bg-clip-text text-transparent">Zero Wait Lobby Counter.</span>
                 </h2>
 
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl font-normal">
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl font-medium font-sans">
                   {CLINIC_INFO.tagline}. Simply reserve your OPD slot online, get an instant queue token number, and get prioritized medical diagnostics at your selected time.
                 </p>
 
                 {/* Patient Quick Instruction banner (Urdu/Hindi) */}
-                <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-xs space-y-1 max-w-lg">
-                  <p className="font-semibold text-blue-400 flex items-center gap-2">
-                    <BadgeAlert className="w-4 h-4 shrink-0" />
+                <div className="p-4 bg-slate-950/85 border border-slate-800/80 rounded-2xl text-xs space-y-1 max-w-lg shadow-2xl backdrop-blur-md">
+                  <p className="font-bold text-cyan-400 flex items-center gap-2">
+                    <BadgeAlert className="w-4 h-4 shrink-0 text-cyan-400" />
                     क्लीनिक विजिट के लिए आसान गाइड:
                   </p>
-                  <p className="text-slate-300 leading-normal font-sans">
+                  <p className="text-slate-350 leading-normal font-sans font-medium">
                     १. नीचे अपनी पसंद के डॉक्टर चुनें। २. तारीख और "टाइम स्लॉट" सिलेक्ट करें। ३. तुरंत अपना डिजिटल OPD टोकन काउंटर पर दिखाएं और सीधे डॉक्टर से मिलें!
                   </p>
                 </div>
@@ -400,7 +400,7 @@ export default function App() {
                 <div className="flex flex-wrap gap-3 pt-3">
                   <button
                     onClick={() => handleInitiateBooking(null)}
-                    className="bg-blue-600 hover:bg-blue-700 font-medium text-xs sm:text-sm text-white px-6 py-3.5 rounded-full transition duration-200 shadow-sm cursor-pointer flex items-center gap-2"
+                    className="bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:via-blue-500 hover:to-indigo-550 font-bold text-xs sm:text-sm text-white px-6 py-4 rounded-full transition duration-300 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-400/30 cursor-pointer flex items-center gap-2 border border-cyan-400/20 active:scale-98 animate-fade-in"
                   >
                     <Plus className="w-4 h-4 text-white stroke-[2.5]" />
                     Book Live OPD Appointment Now
@@ -408,9 +408,9 @@ export default function App() {
                   
                   <button
                     onClick={() => setActiveTab('appointments')}
-                    className="bg-white/5 hover:bg-white/10 text-white font-medium text-xs sm:text-sm px-6 py-3.5 rounded-full transition duration-200 border border-slate-700 cursor-pointer flex items-center gap-2"
+                    className="bg-[#0b1329]/80 hover:bg-[#111c3a] text-slate-300 hover:text-white font-bold text-xs sm:text-sm px-6 py-4 rounded-full transition duration-200 border border-slate-800 cursor-pointer flex items-center gap-2 active:scale-98"
                   >
-                    <CalendarDays className="w-4 h-4 text-blue-400" />
+                    <CalendarDays className="w-4 h-4 text-cyan-400 animate-pulse" />
                     Check My Token Status
                   </button>
                 </div>
@@ -419,89 +419,92 @@ export default function App() {
 
             {/* Quick stats / Features bar */}
             <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 flex items-start gap-3.5">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="bg-[#0b1329]/55 border border-slate-850/65 rounded-3xl p-5 flex items-start gap-3.5 hover:border-slate-800 transition duration-300 text-left">
+                <div className="p-2.5 bg-cyan-950/60 text-cyan-400 rounded-xl border border-cyan-500/20">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-sans font-semibold text-slate-800 text-sm">Verified Doctors</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Top-rated specialist staff</p>
+                  <h4 className="font-sans font-bold text-white text-sm">Verified Doctors</h4>
+                  <p className="text-[11px] text-slate-450 mt-0.5">Top-rated specialist staff</p>
                 </div>
               </div>
               
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 flex items-start gap-3.5">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="bg-[#0b1329]/55 border border-slate-850/65 rounded-3xl p-5 flex items-start gap-3.5 hover:border-slate-800 transition duration-300 text-left">
+                <div className="p-2.5 bg-cyan-950/60 text-cyan-400 rounded-xl border border-cyan-500/20">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-sans font-semibold text-slate-800 text-sm">Open 7 Days</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">8:00 AM to 10:00 PM</p>
+                  <h4 className="font-sans font-bold text-white text-sm">Open 7 Days</h4>
+                  <p className="text-[11px] text-slate-450 mt-0.5">8:00 AM to 10:00 PM</p>
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 flex items-start gap-3.5">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="bg-[#0b1329]/55 border border-slate-850/65 rounded-3xl p-5 flex items-start gap-3.5 hover:border-slate-800 transition duration-300 text-left">
+                <div className="p-2.5 bg-cyan-950/60 text-cyan-400 rounded-xl border border-cyan-500/20">
                   <HeartPulse className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-sans font-semibold text-slate-800 text-sm">5-Day Free Recheck</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Complementary review checks</p>
+                  <h4 className="font-sans font-bold text-white text-sm">5-Day Free Recheck</h4>
+                  <p className="text-[11px] text-slate-455 mt-0.5 text-slate-450">Complementary review checks</p>
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl p-5 border border-slate-200 flex items-start gap-3.5">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+              <div className="bg-[#0b1329]/55 border border-slate-850/65 rounded-3xl p-5 flex items-start gap-3.5 hover:border-slate-800 transition duration-300 text-left">
+                <div className="p-2.5 bg-cyan-950/60 text-cyan-400 rounded-xl border border-cyan-500/20">
                   <PhoneCall className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-sans font-semibold text-slate-800 text-sm">Direct Helpdesk</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{CLINIC_INFO.generalPhone}</p>
+                  <h4 className="font-sans font-bold text-white text-sm">Direct Helpdesk</h4>
+                  <p className="text-[11px] text-slate-450 mt-0.5 font-mono">{CLINIC_INFO.generalPhone}</p>
                 </div>
               </div>
             </section>
 
             {/* Specialties & Clinical Departments Selection */}
             <section className="space-y-6">
-              <div className="text-center max-w-xl mx-auto space-y-2">
-                <h3 className="font-sans font-semibold text-2xl text-slate-900 tracking-tight">Browse Clinical Specialties</h3>
-                <p className="text-xs text-slate-400 leading-normal">
+              <div className="text-center max-w-xl mx-auto space-y-2 animate-fade-in">
+                <span className="text-[10px] uppercase font-mono tracking-widest text-cyan-400 font-bold bg-cyan-950/50 border border-cyan-800 px-3 py-1 rounded-full shadow-sm">Departments</span>
+                <h3 className="font-sans font-bold text-2xl text-white tracking-tight">Browse Clinical Specialties</h3>
+                <p className="text-xs text-slate-400 leading-normal font-sans">
                   Choose a department below to show our qualified medical practitioner lists immediately.
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 pt-2">
                 <button
                   onClick={() => setSelectedSpecialtyFilter('All')}
-                  className={`p-4 rounded-3xl border text-center transition-all duration-250 cursor-pointer ${
+                  className={`p-4 rounded-3xl border text-center transition-all duration-300 cursor-pointer ${
                     selectedSpecialtyFilter === 'All'
-                      ? 'bg-slate-900 border-slate-950 text-white shadow-sm font-semibold'
-                      : 'bg-white border-slate-200 hover:border-blue-200 text-slate-700 hover:bg-slate-50'
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 border-cyan-400/30 text-white shadow-xl shadow-cyan-500/10 font-bold scale-[1.02]'
+                      : 'bg-[#0b1329]/75 border-slate-800/80 hover:border-slate-705 text-slate-300 hover:bg-[#111c3a]'
                   }`}
                 >
-                  <div className="mx-auto w-10 h-10 rounded-full bg-blue-50/10 text-blue-400 flex items-center justify-center mb-2.5">
+                  <div className={`mx-auto w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 ${
+                    selectedSpecialtyFilter === 'All' ? 'bg-white/10 text-cyan-300 hover:rotate-6 transition-all' : 'bg-cyan-950/60 text-cyan-400 border border-cyan-500/10'
+                  }`}>
                     <Layers className="w-5 h-5" />
                   </div>
-                  <h5 className="text-xs font-semibold font-sans">All Departments</h5>
-                  <p className="text-[10px] text-slate-400 mt-1">Full Clinical Care</p>
+                  <h5 className="text-xs font-bold font-sans">All Departments</h5>
+                  <p className="text-[9px] text-cyan-400/85 mt-1 font-mono uppercase tracking-wider font-bold">Full Care</p>
                 </button>
 
                 {SPECIALTIES.map(spec => (
                   <button
                     key={spec.id}
                     onClick={() => setSelectedSpecialtyFilter(spec.name)}
-                    className={`p-4 rounded-3xl border text-center transition-all duration-250 cursor-pointer ${
+                    className={`p-4 rounded-3xl border text-center transition-all duration-300 cursor-pointer ${
                       selectedSpecialtyFilter === spec.name
-                        ? 'bg-slate-900 border-slate-900 text-white shadow-sm'
-                        : 'bg-white border-slate-200 hover:border-blue-200 text-slate-800'
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 border-cyan-400/30 text-white shadow-xl shadow-cyan-500/10 font-bold scale-[1.02]'
+                        : 'bg-[#0b1329]/75 border-slate-800/80 hover:border-slate-705 text-slate-350 hover:bg-[#111c3a]'
                     }`}
                   >
-                    <div className={`mx-auto w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 ${
-                      selectedSpecialtyFilter === spec.name ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600'
+                    <div className={`mx-auto w-10 h-10 rounded-xl flex items-center justify-center mb-2.5 transition-all duration-300 ${
+                      selectedSpecialtyFilter === spec.name ? 'bg-white/10 text-cyan-300' : 'bg-cyan-950/60 text-cyan-400 border border-cyan-500/10'
                     }`}>
                       <SpecialtyIcon name={spec.iconName} className="w-4.5 h-4.5" />
                     </div>
-                    <h5 className="text-xs font-semibold leading-tight font-sans text-left line-clamp-1 truncate block">{spec.name}</h5>
-                    <p className="text-[10px] text-slate-450 text-left line-clamp-2 mt-1 leading-snug">{spec.description.slice(0, 35)}...</p>
+                    <h5 className="text-xs font-bold leading-tight font-sans text-left truncate block">{spec.name}</h5>
+                    <p className="text-[10px] text-slate-450 text-left line-clamp-1 mt-1 font-sans">{spec.description.slice(0, 32)}...</p>
                   </button>
                 ))}
               </div>
@@ -509,14 +512,14 @@ export default function App() {
 
             {/* Doctors finder list section */}
             <section className="space-y-6 pt-3">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-100 pb-5">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-slate-800 pb-5">
                 <div>
-                  <span className="text-[10px] font-mono tracking-wider uppercase text-blue-600 font-semibold">Shifa Clinical Guild</span>
-                  <h3 className="font-sans font-semibold text-2xl text-slate-900 tracking-tight mt-1">
+                  <span className="text-[10px] font-mono tracking-wider uppercase text-cyan-400 font-bold">Shifa Clinical Guild</span>
+                  <h3 className="font-sans font-bold text-2xl text-white tracking-tight mt-1">
                     Meet Our Specialist Doctors
                   </h3>
-                  <p className="text-xs text-slate-450 mt-1">
-                    Currently filtering: <span className="font-semibold text-blue-600">{selectedSpecialtyFilter} doctors</span>
+                  <p className="text-xs text-slate-405 text-slate-400 mt-1">
+                    Currently filtering: <span className="font-semibold text-cyan-400">{selectedSpecialtyFilter} doctors</span>
                   </p>
                 </div>
 
@@ -530,12 +533,12 @@ export default function App() {
                     placeholder="Search doctor by name / qualifications..."
                     value={doctorSearchQuery}
                     onChange={(e) => setDoctorSearchQuery(e.target.value)}
-                    className="w-full rounded-full border border-slate-200 bg-white pl-10 pr-4 py-2.5 text-xs text-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                    className="w-full rounded-full border border-slate-800 bg-[#0b1329]/80 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 outline-none transition"
                   />
                   {doctorSearchQuery && (
                     <button 
                       onClick={() => setDoctorSearchQuery('')}
-                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 text-xs font-mono font-bold cursor-pointer"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-cyan-400 text-xs font-mono font-bold cursor-pointer"
                     >
                       Clear
                     </button>
@@ -554,12 +557,12 @@ export default function App() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-16 bg-white border border-slate-200 rounded-3xl p-6 space-y-3.5">
-                  <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-200">
-                    <AlertCircle className="w-6 h-6 text-slate-400" />
+                <div className="text-center py-16 bg-[#0b1329]/50 border border-slate-800 rounded-3xl p-6 space-y-3.5">
+                  <div className="w-12 h-12 bg-slate-950 text-slate-400 rounded-full flex items-center justify-center mx-auto border border-slate-800">
+                    <AlertCircle className="w-6 h-6 text-cyan-400" />
                   </div>
                   <div>
-                    <h4 className="font-sans font-semibold text-slate-700 text-sm">No doctors match your query</h4>
+                    <h4 className="font-sans font-bold text-white text-sm">No doctors match your query</h4>
                     <p className="text-xs text-slate-400 max-w-sm mx-auto mt-1">We might not have an active practitioner for the chosen department query. Try switching specialties above.</p>
                   </div>
                   <button 
@@ -567,7 +570,7 @@ export default function App() {
                       setSelectedSpecialtyFilter('All');
                       setDoctorSearchQuery('');
                     }}
-                    className="px-5 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full border border-slate-200 hover:bg-slate-205 transition cursor-pointer"
+                    className="px-5 py-2 bg-slate-900 text-slate-200 text-xs font-bold rounded-full border border-slate-800 hover:bg-[#111c3a] hover:text-white transition cursor-pointer"
                   >
                     Reset Active Filters
                   </button>
@@ -576,51 +579,51 @@ export default function App() {
             </section>
 
             {/* Diagnostic list and Branch Locations */}
-            <section className="bg-slate-50 rounded-3xl p-6 sm:p-10 border border-slate-200/65 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="space-y-4">
-                <span className="text-[10px] tracking-wider uppercase font-mono text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full font-semibold">
+            <section className="bg-gradient-to-br from-[#0c142b]/60 to-[#05080f]/90 rounded-3xl p-6 sm:p-10 border border-slate-850/70 grid grid-cols-1 md:grid-cols-3 gap-8 shadow-2xl backdrop-blur-md">
+              <div className="space-y-4 text-left">
+                <span className="text-[10px] tracking-wider uppercase font-mono text-cyan-400 bg-cyan-950/50 border border-cyan-800/45 px-3 py-1 rounded-full font-bold">
                   Diagnostic Services
                 </span>
-                <h4 className="font-sans font-semibold text-xl text-slate-900">In-house Medical Testing</h4>
+                <h4 className="font-sans font-bold text-xl text-white">In-house Medical Testing</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
                   Our core hub departments offer rapid, certified pathology and diagnostic screenings right after your OPD consultation:
                 </p>
-                <ul className="text-xs text-slate-600 space-y-2.5 font-sans">
+                <ul className="text-xs text-slate-300 space-y-2.5 font-sans">
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
                     Complete Blood Count (CBC) & Sugar Profile (₹150)
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
                     Standard Clinical ECG (₹250)
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
                     Maternal & Obstetrics Ultrasound (₹600)
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.6)]"></div>
                     Child Nebulization & Allergy checks
                   </li>
                 </ul>
               </div>
 
               {/* Branch list in full detail */}
-              <div className="md:col-span-2 space-y-4">
-                <span className="text-[10px] tracking-wider uppercase font-mono text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full font-semibold">
+              <div className="md:col-span-2 space-y-4 text-left">
+                <span className="text-[10px] tracking-wider uppercase font-mono text-cyan-400 bg-cyan-950/50 border border-cyan-800/45 px-3 py-1 rounded-full font-bold">
                   Our Branches
                 </span>
-                <h4 className="font-sans font-semibold text-xl text-slate-900">Authorized Shifa Branches</h4>
+                <h4 className="font-sans font-bold text-xl text-white">Authorized Shifa Branches</h4>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {CLINIC_BRANCHES.map(branch => (
-                    <div key={branch.id} className="bg-white border border-slate-200 p-5 rounded-3xl space-y-2">
-                      <h5 className="font-sans font-semibold text-sm text-slate-900">{branch.name}</h5>
-                      <p className="text-[11px] text-slate-500 leading-relaxed">{branch.address}</p>
+                    <div key={branch.id} className="bg-slate-950/70 border border-slate-850/80 p-5 rounded-3xl space-y-2 hover:border-slate-800 transition duration-300">
+                      <h5 className="font-sans font-bold text-sm text-cyan-300">{branch.name}</h5>
+                      <p className="text-[11px] text-slate-400 leading-relaxed">{branch.address}</p>
                       
-                      <div className="pt-2 border-t border-slate-100 text-[10px] text-slate-400 font-mono flex flex-col gap-1">
-                        <span>Timings: <strong className="text-blue-650 font-semibold">{branch.timings}</strong></span>
-                        <span>Contact: <strong className="text-slate-700 font-sans">{branch.phone}</strong></span>
+                      <div className="pt-2 border-t border-slate-900/60 text-[10px] text-slate-450 font-mono flex flex-col gap-1">
+                        <span>Timings: <strong className="text-cyan-400 font-extrabold">{branch.timings}</strong></span>
+                        <span>Contact: <strong className="text-slate-300 font-sans">{branch.phone}</strong></span>
                       </div>
                     </div>
                   ))}
@@ -634,20 +637,20 @@ export default function App() {
         {activeTab === 'book' && (
           <div className="space-y-6">
             {!patientUser ? (
-              <div className="max-w-md mx-auto bg-white border border-slate-200/90 shadow-xl rounded-3xl p-6 sm:p-8 space-y-6 text-center">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto border border-blue-100">
-                  <ShieldCheck className="w-6 h-6" />
+              <div className="max-w-md mx-auto bg-gradient-to-b from-[#0b1329] to-[#05080f] border border-slate-800 shadow-2xl rounded-3xl p-6 sm:p-8 space-y-6 text-center backdrop-blur-md">
+                <div className="w-12 h-12 bg-cyan-950 text-cyan-400 rounded-full flex items-center justify-center mx-auto border border-cyan-800/40 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                  <ShieldCheck className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-sans font-bold text-lg text-slate-900">Check-In Session Required</h3>
-                  <p className="text-xs text-slate-500 leading-normal max-w-xs mx-auto">
+                  <h3 className="font-sans font-bold text-lg text-white">Check-In Session Required</h3>
+                  <p className="text-xs text-slate-450 leading-normal max-w-xs mx-auto font-sans">
                     Please establish your clinical check-in desk session first to prepare your digital queue token slips.
                   </p>
                 </div>
                 <PatientCheckinForm onLogin={handlePatientLogin} />
                 <button
                   onClick={() => setActiveTab('home')}
-                  className="text-xs text-slate-500 hover:text-slate-800 font-semibold cursor-pointer block mx-auto pt-2"
+                  className="text-xs text-slate-450 hover:text-white font-bold cursor-pointer block mx-auto pt-2"
                 >
                   ← Return to Doctor Hub
                 </button>
@@ -656,9 +659,9 @@ export default function App() {
               <>
                 <button
                   onClick={() => handleInitiateBooking(null)}
-                  className="text-xs text-slate-500 hover:text-blue-600 font-semibold cursor-pointer flex items-center gap-1 mb-2 bg-white px-4 py-2 rounded-full border border-slate-200 shadow-xs"
+                  className="text-xs text-slate-400 hover:text-white font-bold cursor-pointer flex items-center gap-1 mb-2 bg-[#0b1329]/85 px-4 py-2 rounded-full border border-slate-800 shadow-xl"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft className="w-3.5 h-3.5 text-cyan-400" />
                   Reset Form Selection
                 </button>
                 <AppointmentForm 
@@ -679,34 +682,34 @@ export default function App() {
         {activeTab === 'appointments' && (
           <div className="space-y-6">
             {!patientUser ? (
-              <div className="max-w-md mx-auto bg-white border border-slate-200/90 shadow-xl rounded-3xl p-6 sm:p-8 space-y-6 text-center">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto border border-blue-100">
-                  <ShieldCheck className="w-6 h-6" />
+              <div className="max-w-md mx-auto bg-gradient-to-b from-[#0b1329] to-[#05080f] border border-slate-800 shadow-2xl rounded-3xl p-6 sm:p-8 space-y-6 text-center backdrop-blur-md">
+                <div className="w-12 h-12 bg-cyan-950 text-cyan-400 rounded-full flex items-center justify-center mx-auto border border-cyan-800/40 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+                  <ShieldCheck className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-sans font-bold text-lg text-slate-900">Patient Register Lookup</h3>
-                  <p className="text-xs text-slate-500 leading-normal max-w-xs mx-auto">
+                  <h3 className="font-sans font-bold text-lg text-white">Patient Register Lookup</h3>
+                  <p className="text-xs text-slate-455 leading-normal max-w-xs mx-auto text-slate-450">
                     Check-in with your email address to instantly query and monitor your active OPD queue registers.
                   </p>
                 </div>
                 <PatientCheckinForm onLogin={handlePatientLogin} />
                 <button
                   onClick={() => setActiveTab('home')}
-                  className="text-xs text-slate-500 hover:text-slate-800 font-semibold cursor-pointer block mx-auto pt-2"
+                  className="text-xs text-slate-455 hover:text-white font-bold cursor-pointer block mx-auto pt-2"
                 >
                   ← Return to Doctor Hub
                 </button>
               </div>
             ) : (
               <>
-                <div className="flex justify-between items-center bg-slate-900 text-white p-6 rounded-3xl border border-slate-950">
+                <div className="flex justify-between items-center bg-[#0b1329]/95 text-white p-6 rounded-3xl border border-slate-800/80 shadow-2xl">
                   <div>
-                    <h2 className="font-sans font-semibold text-lg sm:text-xl tracking-tight">Active OPD Registers</h2>
-                    <p className="text-xs text-slate-400 mt-1 font-sans">Active queue tickets retrieved for {patientUser.email}.</p>
+                    <h2 className="font-sans font-bold text-lg sm:text-xl tracking-tight text-white">Active OPD Registers</h2>
+                    <p className="text-xs text-slate-400 mt-1 font-sans font-medium">Active queue tickets retrieved for {patientUser.email}.</p>
                   </div>
                   <button
                     onClick={() => setActiveTab('home')}
-                    className="text-xs bg-white text-slate-900 font-semibold px-5 py-2.5 rounded-full border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                    className="text-xs bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-405 hover:to-blue-550 text-white font-bold px-5 py-2.5 rounded-full border border-cyan-400/20 transition cursor-pointer"
                   >
                     Go to Doctor Hub
                   </button>
@@ -736,14 +739,14 @@ export default function App() {
       </main>
 
       {/* 3. UNIVERSAL FOOTER */}
-      <footer className="bg-slate-950 border-t border-slate-900 text-slate-400 pt-16 pb-10 px-4 sm:px-6 lg:px-8 mt-16">
+      <footer className="bg-slate-950 border-t border-slate-900 text-slate-300 pt-16 pb-10 px-4 sm:px-6 lg:px-8 mt-16 font-sans">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-b border-slate-850 text-xs sm:text-sm">
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-blue-600 text-white rounded-lg flex items-center justify-center">
-                <HeartPulse className="w-5 h-5" />
+              <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg flex items-center justify-center border border-cyan-400/25 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
+                <HeartPulse className="w-5 h-5 text-white" />
               </div>
-              <span className="font-sans font-semibold text-white text-lg tracking-tight">Shifa CarePlus</span>
+              <span className="font-sans font-bold text-white text-lg tracking-tight">Shifa CarePlus</span>
             </div>
             <p className="text-slate-400 leading-relaxed text-xs font-sans">
               State authorized multi-specialty out-patient health clinic offering diagnostics, vaccines, counseling and pharmacy checks under one trust emblem.
