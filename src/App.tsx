@@ -18,6 +18,7 @@ import DoctorCard from './components/DoctorCard';
 import AppointmentForm from './components/AppointmentForm';
 import AppointmentList from './components/AppointmentList';
 import AdminPanel from './components/AdminPanel';
+import ChatSupport from './components/ChatSupport';
 
 // Type-safe Specialty Icon selector
 const SpecialtyIcon = ({ name, className }: { name: string; className?: string }) => {
@@ -544,10 +545,10 @@ export default function App() {
           </div>
 
           <div>
-            <h5 className="font-mono text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-4 font-sans">Urdu / Hindi Help</h5>
+            <h5 className="font-mono text-[10px] text-slate-500 font-semibold uppercase tracking-wider mb-4 font-sans">Digital OPD Help</h5>
             <div className="space-y-2.5 text-xs text-slate-400 font-sans">
-              <p><strong>ऑनलाइन बुकिंग कैसे करें?</strong> <br />पसंदीदा डॉक्टर के "Book Slot" पर क्लिक करें। डिटेल्स भरकर डिजिटल टोकन प्राप्त करें।</p>
-              <p className="text-[11px] text-slate-500">کوئی مشکل پیش آنے پر بلا جھجھک سپورٹ ہیلپ لائن سے رابطہ کریں۔</p>
+              <p><strong>How to book online?</strong> <br />Click "Book Slot" under any doctor, enter contact details, and receive your digital entrance token instantly.</p>
+              <p className="italic text-[11px] text-slate-500">Need immediate assistance? Click the support icon in the bottom right corner to speak with our live desk.</p>
             </div>
           </div>
         </div>
@@ -559,6 +560,8 @@ export default function App() {
           </p>
         </div>
       </footer>
+      
+      <ChatSupport />
     </div>
   );
 }

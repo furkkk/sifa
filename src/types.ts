@@ -50,3 +50,13 @@ export interface Specialty {
   iconName: string; // Lucide icon lookup
   description: string;
 }
+
+export interface ChatMessage {
+  id: string;
+  sender: 'patient' | 'admin';
+  patientSessionId: string;
+  patientName: string;
+  message: string;
+  createdAt: string;
+}
+

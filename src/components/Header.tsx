@@ -32,7 +32,7 @@ export default function Header({ onBookClick, onViewAppointmentsClick, onViewAdm
             </span>
           </div>
           <p className="font-sans text-xs tracking-wide text-slate-300 italic">
-            {CLINIC_INFO.taglineUrduHindi}
+            {CLINIC_INFO.tagline}
           </p>
         </div>
       </div>

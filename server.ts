@@ -30,6 +30,7 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 const PASSWORD_FILE = path.join(DATA_DIR, 'admin_password.txt');
 const LOCAL_APTS_FILE = path.join(DATA_DIR, 'appointments_backup.json');
+const LOCAL_CHATS_FILE = path.join(DATA_DIR, 'chats_backup.json');
 
 // Default initial appointments if db is empty or unreachable
 const INITIAL_ACC_APTS = [
@@ -108,6 +109,7 @@ const INITIAL_ACC_APTS = [
 // Memory state definitions
 let adminPassword = "";
 let appointmentsCache: any[] = [];
+let chatsCache: any[] = [];
 
 // Initialize local states from disk
 if (fs.existsSync(PASSWORD_FILE)) {
@@ -123,6 +125,26 @@ if (fs.existsSync(LOCAL_APTS_FILE)) {
 } else {
   appointmentsCache = [...INITIAL_ACC_APTS];
   fs.writeFileSync(LOCAL_APTS_FILE, JSON.stringify(appointmentsCache, null, 2));
+}
+
+if (fs.existsSync(LOCAL_CHATS_FILE)) {
+  try {
+    chatsCache = JSON.parse(fs.readFileSync(LOCAL_CHATS_FILE, 'utf-8'));
+  } catch (e) {
+    chatsCache = [];
+  }
+} else {
+  chatsCache = [
+    {
+      id: "msg-init-1",
+      sender: "admin",
+      patientSessionId: "session-demo",
+      patientName: "Sumit Varma",
+      message: "Hello! Welcome to the Shifa CarePlus live clinical support helpdesk. How can we assist with your consultation booking or appointment timeline today?",
+      createdAt: new Date().toISOString()
+    }
+  ];
+  fs.writeFileSync(LOCAL_CHATS_FILE, JSON.stringify(chatsCache, null, 2));
 }
 
 // Support function to load admin password from Supabase table "settings"
@@ -201,6 +223,75 @@ app.post('/api/admin/login', async (req, res) => {
   } else {
     res.status(401).json({ error: "Incorrect password." });
   }
+});
+
+// API: Get All Chat Messages (Admin)
+app.get('/api/chats', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (data && data.length > 0) {
+      const formatted = data.map(row => ({
+        id: row.id,
+        sender: row.sender,
+        patientSessionId: row.patientSessionId || row.patient_session_id,
+        patientName: row.patientName || row.patient_name,
+        message: row.message,
+        createdAt: row.createdAt || row.created_at
+      }));
+      chatsCache = formatted;
+      fs.writeFileSync(LOCAL_CHATS_FILE, JSON.stringify(chatsCache, null, 2));
+      return res.json(formatted);
+    }
+  } catch (err) {
+    console.warn("Supabase chats retrieve error - fallback to local cache:", err.message);
+  }
+  return res.json(chatsCache);
+});
+
+// API: Post Chat Message
+app.post('/api/chats', async (req, res) => {
+  const msg = req.body;
+  if (!msg.id || !msg.patientSessionId || !msg.message) {
+    return res.status(400).json({ error: "Invalid chat message payload." });
+  }
+
+  const fullMsg = {
+    id: msg.id,
+    sender: msg.sender || 'patient',
+    patientSessionId: msg.patientSessionId,
+    patientName: msg.patientName || 'Anonymous Patient',
+    message: msg.message,
+    createdAt: msg.createdAt || new Date().toISOString()
+  };
+
+  chatsCache.push(fullMsg);
+  fs.writeFileSync(LOCAL_CHATS_FILE, JSON.stringify(chatsCache, null, 2));
+
+  try {
+    const payload = {
+      id: fullMsg.id,
+      sender: fullMsg.sender,
+      patient_session_id: fullMsg.patientSessionId,
+      patientSessionId: fullMsg.patientSessionId,
+      patient_name: fullMsg.patientName,
+      patientName: fullMsg.patientName,
+      message: fullMsg.message,
+      created_at: fullMsg.createdAt,
+      createdAt: fullMsg.createdAt
+    };
+
+    const { error } = await supabase.from('chat_messages').insert(payload);
+    if (error) {
+      console.warn("Supabase chat message insert failed - falling back to local storage:", error.message);
+    }
+  } catch (err) {
+    console.warn("Could not reach Supabase - cached chat locally:", err);
+  }
+
+  res.json(fullMsg);
 });
 
 // Helper to standardise database return rows to full object schema
@@ -351,7 +442,7 @@ app.post('/api/appointments/:id/cancel', async (req, res) => {
 async function startServer() {
   const distPath = path.join(process.cwd(), 'dist');
   
-  if (process.env.NODE_ENV !== 'production' && process.env.DISABLE_HMR !== "true") {
+  if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa'
@@ -366,7 +457,7 @@ async function startServer() {
         res.sendFile(path.join(distPath, 'index.html'));
       });
     } else {
-      // If dist folder doesn't exist, use Vite middleware without HMR (such as inside development workspace)
+      // If dist folder doesn't exist in production, use Vite middleware as a safe fallback
       const vite = await createViteServer({
         server: { middlewareMode: true },
         appType: 'spa'

@@ -8,12 +8,10 @@ import { Doctor, ClinicBranch, Specialty, Appointment } from './types';
 export const CLINIC_INFO = {
   name: "Shifa CarePlus Clinic",
   tagline: "Your Family's Health & Wellness, Our Ultimate Priority",
-  taglineUrduHindi: "आपकी सेहत और देखभाल, हमारी सबसे बड़ी प्राथमिकता।",
   emergencyPhone: "+91 98765 43210",
   generalPhone: "+91 11 4567 8901",
-  helplineUrdu: "ہیلپ لائن اور بکنگ",
-  helplineHindi: "हेल्पलाइन एवं बुकिंग",
-  address: "Primary Hub: Sector-5, Block C, Metro Avenue, New Delhi, India / Lahore, Pakistan",
+  helplineLabel: "Shifa CarePlus Support Line & Urgent Care Booking",
+  address: "Primary Hub: Sector-5, Block C, Metro Avenue, New Delhi, India",
   timings: "Open 7 Days a Week: 08:00 AM - 10:00 PM",
   email: "care@shifaclinic.com"
 };

@@ -7,7 +7,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Users, Calendar, Clock, Phone, Mail, FileText, Search, Activity, 
   CheckCircle2, XCircle, Trash2, Printer, Key, ShieldAlert, Check, 
-  Copy, Database, RefreshCw, ChevronDown, Lock, ChevronUp, AlertCircle
+  Copy, Database, RefreshCw, ChevronDown, Lock, ChevronUp, AlertCircle,
+  MessageCircle, MessageSquare, Send
 } from 'lucide-react';
 import { Appointment } from '../types';
 
@@ -27,6 +28,10 @@ export default function AdminPanel({ onCancelAppointment, appointments, onRefres
   const [successMsg, setSuccessMsg] = useState<string>('');
   
   // Dashboard & search/filter states
+  const [activeAdminSubTab, setActiveAdminSubTab] = useState<'ledger' | 'chat'>('ledger');
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [selectedSessionId, setSelectedSessionId] = useState<string>('');
+  const [adminReplyInput, setAdminReplyInput] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [doctorFilter, setDoctorFilter] = useState<string>('All');
@@ -43,6 +48,28 @@ export default function AdminPanel({ onCancelAppointment, appointments, onRefres
     }
     checkAdminStatus();
   }, []);
+
+  // Poll admin chat messages
+  useEffect(() => {
+    if (!isAdminLoggedIn) return;
+
+    const fetchAllChats = async () => {
+      try {
+        const res = await fetch('/api/chats');
+        if (res.ok) {
+          const data = await res.json();
+          setChatMessages(data);
+        }
+      } catch (err) {
+        console.warn("Could not download admin chats list:", err);
+      }
+    };
+
+    fetchAllChats();
+
+    const interval = setInterval(fetchAllChats, 3000);
+    return () => clearInterval(interval);
+  }, [isAdminLoggedIn]);
 
   const checkAdminStatus = async () => {
     try {
@@ -157,12 +184,30 @@ CREATE TABLE IF NOT EXISTS settings (
   value TEXT
 );
 
+-- Support Chat Messages table
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id TEXT PRIMARY KEY,
+  sender TEXT, -- 'patient' or 'admin'
+  patient_session_id TEXT,
+  patientSessionId TEXT,
+  patient_name TEXT,
+  patientName TEXT,
+  message TEXT,
+  created_at TEXT,
+  createdAt TEXT
+);
+
 -- Enable general table accessibility configs
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public Read Access" ON appointments FOR SELECT USING (true);
 CREATE POLICY "Public Insert Access" ON appointments FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public Update Access" ON appointments FOR UPDATE USING (true);
-CREATE POLICY "Public Delete Access" ON appointments FOR DELETE USING (true);`;
+CREATE POLICY "Public Delete Access" ON appointments FOR DELETE USING (true);
+
+ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public Chat Read Access" ON chat_messages FOR SELECT USING (true);
+CREATE POLICY "Public Chat Insert Access" ON chat_messages FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (true);`;
 
   const copySqlToClipboard = () => {
     navigator.clipboard.writeText(sqlSchemaText);
@@ -204,6 +249,38 @@ CREATE POLICY "Public Delete Access" ON appointments FOR DELETE USING (true);`;
       setIsLoading(true);
       await onCancelAppointment(id);
       setIsLoading(false);
+    }
+  };
+
+  const handleAdminSendReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminReplyInput.trim() || !selectedSessionId) return;
+
+    // Find the current session messages to identify the correct patient's name
+    const sessionMessages = chatMessages.filter(m => m.patientSessionId === selectedSessionId);
+    const patientName = sessionMessages[0]?.patientName || "Anonymous Patient";
+
+    const replyMsg = {
+      id: 'msg-admin-' + Math.random().toString(36).substring(2, 11) + '-' + Date.now(),
+      sender: 'admin' as const,
+      patientSessionId: selectedSessionId,
+      patientName: patientName,
+      message: adminReplyInput.trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    // Optimistic state
+    setChatMessages(prev => [...prev, replyMsg]);
+    setAdminReplyInput('');
+
+    try {
+      await fetch('/api/chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(replyMsg)
+      });
+    } catch (err) {
+      console.warn("Admin reply sync error:", err);
     }
   };
 
@@ -354,11 +431,224 @@ CREATE POLICY "Public Delete Access" ON appointments FOR DELETE USING (true);`;
 
       {successMsg && (
         <div className="p-3 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-2xl text-xs flex gap-2 items-center mx-auto max-w-full">
-          <Check className="w-4 h-4 text-emerald-600" />
+          <Check className="w-4 h-4 text-emerald-605 text-emerald-600" />
           <span>{successMsg}</span>
         </div>
       )}
 
+      {/* Tab Switch Controls */}
+      <div className="flex border-b border-slate-200 mt-2 gap-6 font-sans">
+        <button
+          onClick={() => setActiveAdminSubTab('ledger')}
+          className={`pb-3 text-xs uppercase tracking-wider font-semibold border-b-2 cursor-pointer transition-all ${
+            activeAdminSubTab === 'ledger'
+              ? 'border-blue-600 text-blue-600 font-bold'
+              : 'border-transparent text-slate-400 hover:text-slate-600'
+          }`}
+        >
+          Patient Tickets & Ledger
+        </button>
+        <button
+          onClick={() => setActiveAdminSubTab('chat')}
+          className={`pb-3 text-xs uppercase tracking-wider font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
+            activeAdminSubTab === 'chat'
+              ? 'border-blue-600 text-blue-600 font-bold'
+              : 'border-transparent text-slate-400 hover:text-slate-600'
+          }`}
+        >
+          <span>Live Support Helpdesk</span>
+          {chatMessages.length > 0 && (
+            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-mono rounded-full font-bold border border-blue-100 animate-pulse">
+              {Array.from(new Set(chatMessages.map(m => m.patientSessionId))).length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {activeAdminSubTab === 'chat' ? (
+        /* ======================== CHATROOM WORKSPACE ======================== */
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in font-sans">
+          
+          {/* Active Chats Sidebar */}
+          <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 shadow-xs">
+            <div>
+              <h3 className="font-semibold text-slate-900 text-sm">Active Patients</h3>
+              <p className="text-[11px] text-slate-400 mt-0.5">Select a patient below to view messages and reply instantly.</p>
+            </div>
+            
+            <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+              {(() => {
+                const groupedMap: { [key: string]: any[] } = {};
+                chatMessages.forEach(msg => {
+                  if (!groupedMap[msg.patientSessionId]) {
+                    groupedMap[msg.patientSessionId] = [];
+                  }
+                  groupedMap[msg.patientSessionId].push(msg);
+                });
+                
+                const sessionList = Object.keys(groupedMap).map(sid => {
+                  const msgs = groupedMap[sid];
+                  const lastMsg = msgs[msgs.length - 1];
+                  return {
+                    sessionId: sid,
+                    patientName: lastMsg.patientName || 'Anonymous Patient',
+                    lastMessage: lastMsg.message,
+                    lastTimestamp: lastMsg.createdAt,
+                    messagesCount: msgs.length,
+                    lastSender: lastMsg.sender
+                  };
+                }).sort((a, b) => new Date(b.lastTimestamp).getTime() - new Date(a.lastTimestamp).getTime());
+
+                if (sessionList.length === 0) {
+                  return (
+                    <div className="text-center py-12 space-y-2 text-slate-400 border border-dashed border-slate-200 rounded-2xl p-4">
+                      <MessageCircle className="w-8 h-8 text-slate-400 mx-auto" />
+                      <p className="text-xs">No active chats at the moment.</p>
+                    </div>
+                  );
+                }
+
+                return sessionList.map(session => {
+                  const isSelected = selectedSessionId === session.sessionId;
+                  return (
+                    <button
+                      key={session.sessionId}
+                      onClick={() => setSelectedSessionId(session.sessionId)}
+                      className={`w-full text-left p-3.5 rounded-2xl border transition-all cursor-pointer block ${
+                        isSelected
+                          ? 'bg-slate-950 border-slate-900 text-white shadow-md'
+                          : 'bg-slate-50/55 border-slate-200/60 hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="font-semibold text-xs truncate max-w-[150px]">
+                          {session.patientName}
+                        </span>
+                        <span className={`text-[9px] font-mono shrink-0 ${isSelected ? 'text-slate-400' : 'text-slate-400'}`}>
+                          {new Date(session.lastTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      
+                      <p className={`text-[11px] truncate mt-1.5 font-sans italic ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                        {session.lastSender === 'admin' ? 'You: ' : ''}"{session.lastMessage}"
+                      </p>
+                      
+                      <div className="flex items-center justify-between gap-1.5 mt-2.5">
+                        <span className={`text-[9px] font-mono font-medium px-2 py-0.5 rounded-full border ${
+                          isSelected 
+                            ? 'bg-slate-900 border-slate-800 text-slate-300' 
+                            : 'bg-white border-slate-200 text-slate-600'
+                        }`}>
+                          {session.messagesCount} message{session.messagesCount > 1 ? 's' : ''}
+                        </span>
+                        
+                        {session.lastSender === 'patient' && (
+                          <span className="flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                            <span className="text-[9px] font-semibold text-blue-500 font-mono uppercase tracking-wider">Help Awaited</span>
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+
+          {/* Chat Window Panel */}
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-6 shadow-xs flex flex-col justify-between min-h-[500px]">
+            {(() => {
+              const groupedMap: { [key: string]: any[] } = {};
+              chatMessages.forEach(msg => {
+                if (!groupedMap[msg.patientSessionId]) groupedMap[msg.patientSessionId] = [];
+                groupedMap[msg.patientSessionId].push(msg);
+              });
+              const activeSessionMessages = groupedMap[selectedSessionId] || [];
+              const patientName = activeSessionMessages[0]?.patientName || "Patient";
+
+              if (!selectedSessionId) {
+                return (
+                  <div className="text-center my-auto space-y-3 py-16">
+                    <div className="w-12 h-12 bg-slate-50 border border-slate-200 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+                      <MessageSquare className="w-5.5 h-5.5" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-700 text-sm">Select Active Patient Conversation</h4>
+                      <p className="text-xs text-slate-400 max-w-xs mx-auto">Choose an ongoing patient session in the side list to begin official clinicians support dialogue.</p>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="flex flex-col h-full justify-between flex-1 font-sans">
+                  {/* Dialogue Header */}
+                  <div className="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
+                    <div>
+                      <h4 className="font-semibold text-slate-900 text-[13px] uppercase tracking-wider font-sans">
+                        Room: <span className="text-blue-600 font-bold select-all">{patientName}</span>
+                      </h4>
+                      <p className="text-[10px] text-slate-400 font-mono mt-0.5">Session: {selectedSessionId}</p>
+                    </div>
+                    
+                    <span className="text-[9px] uppercase font-mono tracking-widest bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-100 font-semibold flex items-center gap-1">
+                      <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" /> Online Sync
+                    </span>
+                  </div>
+
+                  {/* Message Threads */}
+                  <div className="flex-1 overflow-y-auto space-y-4 pr-1 max-h-[340px] mb-4 text-xs">
+                    {activeSessionMessages.map((m) => {
+                      const isAdmin = m.sender === 'admin';
+                      return (
+                        <div key={m.id} className={`flex gap-2.5 ${isAdmin ? 'justify-end' : 'justify-start'}`}>
+                          {!isAdmin && (
+                            <div className="w-6.5 h-6.5 rounded-full bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-[9px] shrink-0 font-mono uppercase">
+                              PT
+                            </div>
+                          )}
+                          <div className={`p-3 rounded-2xl max-w-[80%] break-words leading-relaxed ${
+                            isAdmin 
+                              ? 'bg-slate-900 text-slate-100 rounded-tr-none text-left' 
+                              : 'bg-slate-100 text-slate-850 rounded-tl-none border border-slate-200 select-all text-left'
+                          }`}>
+                            <p>{m.message}</p>
+                            <span className={`block text-[8px] mt-1.5 font-mono ${isAdmin ? 'text-slate-400' : 'text-slate-400'}`}>
+                              {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • by {isAdmin ? 'Support desk (You)' : m.patientName}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Input Reply */}
+                  <form onSubmit={handleAdminSendReply} className="border-t border-slate-100 pt-4 flex gap-2">
+                    <input
+                      type="text"
+                      required
+                      value={adminReplyInput}
+                      onChange={(e) => setAdminReplyInput(e.target.value)}
+                      placeholder={`Type reply to ${patientName}...`}
+                      className="flex-1 text-xs rounded-full border border-slate-200 bg-slate-50/50 px-4 py-2.5 outline-none focus:border-blue-500 focus:bg-white transition-all font-sans text-slate-800"
+                    />
+                    <button
+                      type="submit"
+                      className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-full flex items-center gap-1 cursor-pointer transition shrink-0"
+                    >
+                      <span>Send Response</span>
+                    </button>
+                  </form>
+                </div>
+              );
+            })()}
+          </div>
+
+        </div>
+      ) : (
+        /* Regular Appointment Ledger view */
+        <>
       {/* 2. SQL schema helper box */}
       <div className="bg-slate-900 text-slate-100 rounded-3xl overflow-hidden border border-slate-950 shadow-md">
         <button 
@@ -630,6 +920,8 @@ CREATE POLICY "Public Delete Access" ON appointments FOR DELETE USING (true);`;
         )}
 
       </div>
+      </>
+      )}
     </div>
   );
 }
