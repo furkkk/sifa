@@ -294,40 +294,54 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
   // Render initialization state (Set Password)
   if (isInitialized === false && !isAdminLoggedIn) {
     return (
-      <div className="max-w-md mx-auto my-12 bg-neutral-950 rounded-3xl border border-neutral-900 shadow-2xl p-8 space-y-6 text-neutral-200">
+      <div className="max-w-md mx-auto my-12 bg-white rounded-3xl border border-zinc-200 shadow-xl p-8 space-y-6 text-zinc-900 font-sans">
         <div className="text-center space-y-3">
-          <div className="w-12 h-12 bg-neutral-900 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-neutral-800">
-            <Lock className="w-5 h-5 animate-pulse" />
+          <div className="w-12 h-12 bg-zinc-100 text-black rounded-full flex items-center justify-center mx-auto mb-2 border border-zinc-200 shadow-xs">
+            <Lock className="w-5 h-5" />
           </div>
-          <h2 className="font-sans font-extrabold text-xl text-white">Define Admin Password</h2>
-          <p className="text-xs text-neutral-400 leading-relaxed">
-            Welcome! As the first administrator logging in, please create a secure management password. This password will be stored persistently in your backend database.
+          <h2 className="font-sans font-extrabold text-xl text-black">Set Staff Password</h2>
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            Welcome! As the clinic manager, please define an authorized staff access password to save secure clinic records.
+          </p>
+        </div>
+
+        {/* Worker-only Prominent Warning Banner */}
+        <div className="p-4 bg-zinc-900 border-l-4 border-black text-white rounded-2xl text-xs space-y-1.5 shadow-sm">
+          <div className="flex items-center gap-2 font-extrabold tracking-wider text-[10px] uppercase font-mono text-zinc-200">
+            <ShieldAlert className="w-4 h-4 text-red-500" />
+            <span>⚠️ Strictly Restricted!</span>
+          </div>
+          <p className="font-sans font-bold text-[13px] leading-snug">
+            ONLY FOR WORKER - NO PUBLIC USER
+          </p>
+          <p className="text-[10px] text-zinc-300 leading-normal">
+            यह पेज सिर्फ अस्पताल कर्मचारियों (Staff/Doctors) के उपयोग के लिए है। आम मरीज़ कृपया बैक बटन दबाएं।
           </p>
         </div>
 
         {errorMsg && (
-          <div className="p-3 bg-neutral-900 border border-neutral-800 text-rose-400 rounded-2xl text-xs flex gap-2 items-center">
-            <ShieldAlert className="w-4 h-4 shrink-0 text-rose-500" />
+          <div className="p-3 bg-zinc-50 border border-zinc-200 text-red-600 rounded-2xl text-xs flex gap-2 items-center font-bold">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         <form onSubmit={handleInitializePassword} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-mono uppercase text-neutral-500 font-bold tracking-wider">Specify Admin Password</label>
+          <div className="space-y-1.5 text-left">
+            <label className="text-[10px] font-mono uppercase text-zinc-400 font-bold tracking-wider">Specify Admin Password</label>
             <input 
               type="password"
               placeholder="e.g. shifacare2026"
               value={newPasswordInput}
               onChange={(e) => setNewPasswordInput(e.target.value)}
-              className="w-full rounded-2xl border border-neutral-900 bg-neutral-900 px-4 py-3 text-sm text-white placeholder:text-neutral-750 outline-none focus:border-cyan-400 transition-all font-mono"
+              className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-black placeholder:text-zinc-300 outline-none focus:border-black transition-all font-mono"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-white hover:bg-neutral-100 text-black font-extrabold text-xs rounded-full cursor-pointer transition shadow-sm"
+            className="w-full py-3.5 px-4 bg-black hover:bg-zinc-800 text-white font-extrabold text-xs rounded-full cursor-pointer transition shadow-sm uppercase tracking-wider"
           >
             Save Security Credentials & Login
           </button>
@@ -339,55 +353,69 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
   // Render Login state
   if (!isAdminLoggedIn) {
     return (
-      <div className="max-w-md mx-auto my-12 bg-neutral-950 rounded-3xl border border-neutral-900 shadow-2xl p-8 space-y-6 text-neutral-200">
+      <div className="max-w-md mx-auto my-12 bg-white rounded-3xl border border-zinc-200 shadow-xl p-8 space-y-6 text-zinc-900 font-sans">
         <div className="text-center space-y-3">
-          <div className="w-12 h-12 bg-neutral-900 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-neutral-800">
+          <div className="w-12 h-12 bg-zinc-100 text-black rounded-full flex items-center justify-center mx-auto mb-2 border border-zinc-200">
             <Key className="w-5 h-5" />
           </div>
-          <h2 className="font-sans font-extrabold text-xl text-white">Administrator Access</h2>
-          <p className="text-xs text-neutral-400 leading-relaxed">
-            Enter the clinical management password to open the persistent Supabase synchronization panel.
+          <h2 className="font-sans font-extrabold text-xl text-black">Staff Workplace Sign In</h2>
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            Enter the clinical management password to synchronize appointments and chat feeds.
+          </p>
+        </div>
+
+        {/* Worker-only Prominent Warning Banner */}
+        <div className="p-4 bg-zinc-950 border-l-4 border-black text-white rounded-2xl text-xs space-y-1.5 shadow-sm">
+          <div className="flex items-center gap-2 font-extrabold tracking-wider text-[10px] uppercase font-mono text-zinc-300">
+            <ShieldAlert className="w-4 h-4 text-red-500" />
+            <span>⚠️ STRICTLY RESTRICTED</span>
+          </div>
+          <p className="font-sans font-bold text-[13.5px] leading-snug tracking-wide text-white uppercase">
+            ONLY FOR WORKER - NO PUBLIC USER
+          </p>
+          <p className="text-[10px] text-zinc-400 leading-normal font-medium">
+            यह पेज सिर्फ स्वास्थ्य कर्मचारियों के लिए है, आम जनता या मरीजों के ठहरने के लिए नहीं है।
           </p>
         </div>
 
         {successMsg && (
-          <div className="p-3 bg-neutral-900 border border-neutral-800 text-cyan-400 rounded-2xl text-xs flex gap-2 items-center">
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-cyan-400" />
+          <div className="p-3 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-2xl text-xs flex gap-2 items-center font-bold">
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-zinc-900" />
             <span>{successMsg}</span>
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-3 bg-neutral-900 border border-neutral-800 text-rose-450 rounded-2xl text-xs flex gap-2 items-center">
+          <div className="p-3 bg-zinc-55 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-xs flex gap-2 items-center font-bold">
             <ShieldAlert className="w-4 h-4 shrink-0 text-rose-500" />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        <form onSubmit={handleAdminLogin} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-mono uppercase text-neutral-500 font-bold tracking-wider">Enter Admin Password</label>
+        <form onSubmit={handleAdminLogin} className="space-y-4 font-sans">
+          <div className="space-y-1.5 text-left">
+            <label className="text-[10px] font-mono uppercase text-zinc-400 font-bold tracking-wider">Staff Code Password</label>
             <input 
               type="password"
               placeholder="••••••••••••••••"
               value={adminPasswordInput}
               onChange={(e) => setAdminPasswordInput(e.target.value)}
-              className="w-full rounded-2xl border border-neutral-900 bg-neutral-900 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400 transition-all font-mono placeholder:text-neutral-750"
+              className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-black outline-none focus:border-black transition-all font-mono placeholder:text-zinc-200"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 px-4 bg-white hover:bg-neutral-100 text-black font-extrabold text-xs rounded-full cursor-pointer transition shadow-sm"
+            className="w-full py-3.5 px-4 bg-black hover:bg-zinc-800 text-white font-extrabold text-xs rounded-full cursor-pointer transition shadow-sm uppercase tracking-wider"
           >
-            Access Admin Workspace
+            Access Staff Panel
           </button>
         </form>
 
-        <div className="border-t border-neutral-900 pt-4 text-center">
-          <p className="text-[10px] text-neutral-500 font-sans leading-normal">
-            First time logging in? Specify your customized password in step above. Persistent cloud database holds your configuration across hot redeployments.
+        <div className="border-t border-zinc-100 pt-4 text-center">
+          <p className="text-[10px] text-zinc-400 font-sans leading-normal">
+            For secure doctor operations only. Unauthorized access attempts are monitored securely in the database log.
           </p>
         </div>
       </div>
@@ -396,22 +424,42 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
 
   // Admin Workspace (Main Content)
   return (
-    <div className="space-y-8 animate-fade-in font-sans text-neutral-205">
+    <div className="space-y-8 animate-fade-in font-sans text-zinc-800">
       
+      {/* 0. STRICT WORKER-ONLY HEAVY BANNER */}
+      <div className="bg-black text-white p-4.5 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md select-none border border-zinc-950">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-zinc-800 text-white rounded-xl">
+            <ShieldAlert className="w-5 h-5 text-red-500 animate-pulse" />
+          </div>
+          <div className="text-left">
+            <h4 className="font-extrabold text-[12.5px] uppercase tracking-wider font-sans">
+              ONLY FOR WORKER - NO PUBLIC USER ALLOWED
+            </h4>
+            <p className="text-[10px] text-zinc-300 font-mono mt-0.5">
+              Authorized Health Clinic Personnel Duty Counter Terminal • System Block Ref: #655
+            </p>
+          </div>
+        </div>
+        <span className="text-[9.5px] font-mono tracking-widest bg-zinc-800 text-white px-3 py-1 rounded-full font-bold uppercase border border-zinc-700">
+          Staff Operator
+        </span>
+      </div>
+
       {/* 1. Welcoming Title Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-neutral-950 border border-neutral-900 rounded-3xl p-6 shadow-md text-neutral-200">
-        <div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white border border-zinc-200 rounded-3xl p-6 shadow-xs text-zinc-850">
+        <div className="text-left">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="px-2.5 py-0.5 bg-neutral-900 text-cyan-400 border border-neutral-850 uppercase tracking-widest text-[9px] font-mono font-bold rounded-full">
+            <span className="px-2.5 py-0.5 bg-zinc-100 text-zinc-800 border border-zinc-200 uppercase tracking-widest text-[9px] font-mono font-bold rounded-full">
               Live System Panel
             </span>
-            <span className="flex items-center gap-1 text-[11px] text-neutral-450 font-mono">
-              <Database className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+            <span className="flex items-center gap-1 text-[11px] text-zinc-500 font-mono">
+              <Database className="w-3.5 h-3.5 text-black" />
               Connected to Supabase Cloud Engine
             </span>
           </div>
-          <h2 className="font-sans font-extrabold text-2xl text-white mt-1.5">Management Hub & Supabase Logs</h2>
-          <p className="text-xs text-neutral-400">Control live OPD appointments, evaluate clinician visits, and view patient symptoms.</p>
+          <h2 className="font-sans font-extrabold text-2xl text-zinc-900 mt-1.5 tracking-tight">Staff Management Portal</h2>
+          <p className="text-xs text-zinc-500 font-sans">Control live OPD appointments, evaluate clinician visits, and view patient symptoms.</p>
         </div>
         
         <div className="flex gap-2 shrink-0">
@@ -421,15 +469,15 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
               setSuccessMsg('Refreshing dynamic database feeds...');
               setTimeout(() => setSuccessMsg(''), 2000);
             }}
-            className="px-4.5 py-2 text-cyan-400 border border-neutral-900 hover:border-cyan-400/30 bg-neutral-950 hover:bg-neutral-900 text-xs font-bold rounded-full flex items-center gap-1.5 transition-all cursor-pointer"
+            className="px-4.5 py-2 text-black border border-zinc-200 hover:border-black bg-white text-xs font-bold rounded-full flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
           >
-            <RefreshCw className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '3s' }} />
+            <RefreshCw className="w-3.5 h-3.5" />
             Sync Database
           </button>
           
           <button
             onClick={handleLogout}
-            className="px-4.5 py-2 bg-neutral-900 hover:bg-neutral-850 text-white text-xs font-bold rounded-full cursor-pointer transition border border-neutral-800"
+            className="px-4.5 py-2 bg-black hover:bg-zinc-800 text-white text-xs font-bold rounded-full cursor-pointer transition border border-black shadow-xs"
           >
             Log Out Panel
           </button>
@@ -437,20 +485,20 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
       </div>
 
       {successMsg && (
-        <div className="p-3 bg-neutral-950 border border-neutral-900 text-cyan-400 rounded-2xl text-xs flex gap-2 items-center">
-          <Check className="w-4 h-4 text-cyan-400" />
+        <div className="p-3.5 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-2xl text-xs flex gap-2 items-center font-bold">
+          <Check className="w-4 h-4 text-zinc-950" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {/* Tab Switch Controls */}
-      <div className="flex border-b border-neutral-900 mt-2 gap-6 font-sans">
+      <div className="flex border-b border-zinc-200 mt-2 gap-6 font-sans">
         <button
           onClick={() => setActiveAdminSubTab('ledger')}
           className={`pb-3 text-xs uppercase tracking-wider font-extrabold border-b-2 cursor-pointer transition-all ${
             activeAdminSubTab === 'ledger'
-              ? 'border-white text-white font-black'
-              : 'border-transparent text-neutral-500 hover:text-neutral-350'
+              ? 'border-black text-black font-black'
+              : 'border-transparent text-zinc-400 hover:text-zinc-600'
           }`}
         >
           Patient Tickets & Ledger
@@ -459,13 +507,13 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
           onClick={() => setActiveAdminSubTab('chat')}
           className={`pb-3 text-xs uppercase tracking-wider font-extrabold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
             activeAdminSubTab === 'chat'
-              ? 'border-white text-white font-black'
-              : 'border-transparent text-neutral-500 hover:text-neutral-350'
+              ? 'border-black text-black font-black'
+              : 'border-transparent text-zinc-400 hover:text-zinc-600'
           }`}
         >
           <span>Live Support Helpdesk</span>
           {chatMessages.length > 0 && (
-            <span className="px-2 py-0.5 bg-neutral-900 text-cyan-400 text-[10px] font-mono rounded-full font-bold border border-neutral-850 animate-pulse">
+            <span className="px-2 py-0.5 bg-black text-white text-[10px] font-mono rounded-full font-bold border border-zinc-950 animate-pulse">
               {Array.from(new Set(chatMessages.map(m => m.patientSessionId))).length}
             </span>
           )}
@@ -474,13 +522,13 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
 
       {activeAdminSubTab === 'chat' ? (
         /* ======================== CHATROOM WORKSPACE ======================== */
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in font-sans text-neutral-200">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in font-sans text-zinc-800">
           
           {/* Active Chats Sidebar */}
-          <div className="bg-neutral-950 border border-neutral-900 rounded-3xl p-5 space-y-4 shadow-md">
+          <div className="bg-white border border-zinc-200 rounded-3xl p-5 space-y-4 shadow-xs">
             <div>
-              <h3 className="font-extrabold text-white text-sm">Active Patients</h3>
-              <p className="text-[11px] text-neutral-500 mt-0.5">Select a patient below to view messages and reply instantly.</p>
+              <h3 className="font-extrabold text-zinc-900 text-sm">Active Patients</h3>
+              <p className="text-[11px] text-zinc-400 mt-0.5 font-sans">Select a patient below to view messages and reply instantly.</p>
             </div>
             
             <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
@@ -508,8 +556,8 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
 
                 if (sessionList.length === 0) {
                   return (
-                    <div className="text-center py-12 space-y-2 text-neutral-550 border border-dashed border-neutral-900 rounded-2xl p-4">
-                      <MessageSquare className="w-8 h-8 text-neutral-600 mx-auto animate-pulse" />
+                    <div className="text-center py-12 space-y-2 text-zinc-400 border border-dashed border-zinc-200 rounded-2xl p-4">
+                      <MessageSquare className="w-8 h-8 text-zinc-300 mx-auto" />
                       <p className="text-xs">No active chats at the moment.</p>
                     </div>
                   );
@@ -523,36 +571,36 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                       onClick={() => setSelectedSessionId(session.sessionId)}
                       className={`w-full text-left p-3.5 rounded-2xl border transition-all cursor-pointer block ${
                         isSelected
-                          ? 'bg-neutral-900 border-cyan-400/30 text-white shadow-md'
-                          : 'bg-neutral-900/35 border-neutral-900 hover:bg-neutral-900 text-neutral-350'
+                          ? 'bg-zinc-50 border-black text-black shadow-xs'
+                          : 'bg-white border-zinc-200 hover:bg-zinc-50 text-zinc-650'
                       }`}
                     >
                       <div className="flex justify-between items-start gap-2">
-                        <span className="font-extrabold text-xs truncate max-w-[150px]">
+                        <span className="font-extrabold text-xs truncate max-w-[150px] text-zinc-900">
                           {session.patientName}
                         </span>
-                        <span className={`text-[9px] font-mono shrink-0 ${isSelected ? 'text-cyan-400' : 'text-neutral-500'}`}>
+                        <span className={`text-[9px] font-mono shrink-0 ${isSelected ? 'text-black font-bold' : 'text-zinc-450'}`}>
                           {new Date(session.lastTimestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       
-                      <p className={`text-[11px] truncate mt-1.5 font-sans italic ${isSelected ? 'text-neutral-200' : 'text-neutral-450'}`}>
+                      <p className={`text-[11px] truncate mt-1.5 font-sans italic ${isSelected ? 'text-zinc-900 font-medium' : 'text-zinc-500'}`}>
                         {session.lastSender === 'admin' ? 'You: ' : ''}"{session.lastMessage}"
                       </p>
                       
                       <div className="flex items-center justify-between gap-1.5 mt-2.5">
                         <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border ${
                           isSelected 
-                            ? 'bg-neutral-950 border-neutral-800 text-cyan-400' 
-                            : 'bg-neutral-950 border-neutral-900 text-neutral-400'
+                            ? 'bg-black border-black text-white' 
+                            : 'bg-zinc-150 bg-zinc-100 border-zinc-200 text-zinc-700'
                         }`}>
                           {session.messagesCount} message{session.messagesCount > 1 ? 's' : ''}
                         </span>
                         
                         {session.lastSender === 'patient' && (
                           <span className="flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                            <span className="text-[9px] font-bold text-cyan-400 font-mono uppercase tracking-wider">Help Awaited</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse"></span>
+                            <span className="text-[9px] font-bold text-black font-mono uppercase tracking-wider">Help Awaited</span>
                           </span>
                         )}
                       </div>
@@ -564,7 +612,7 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
           </div>
 
           {/* Chat Window Panel */}
-          <div className="lg:col-span-2 bg-neutral-950 border border-neutral-900 rounded-3xl p-6 shadow-xl flex flex-col justify-between min-h-[500px]">
+          <div className="lg:col-span-2 bg-white border border-zinc-200 rounded-3xl p-6 shadow-sm flex flex-col justify-between min-h-[500px]">
             {(() => {
               const groupedMap: { [key: string]: any[] } = {};
               chatMessages.forEach(msg => {
@@ -577,30 +625,30 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
               if (!selectedSessionId) {
                 return (
                   <div className="text-center my-auto space-y-3 py-16">
-                    <div className="w-12 h-12 bg-neutral-900 border border-neutral-900 text-neutral-500 rounded-full flex items-center justify-center mx-auto">
-                      <MessageSquare className="w-5.5 h-5.5 text-cyan-400" />
+                    <div className="w-12 h-12 bg-zinc-50 border border-zinc-200 text-zinc-450 rounded-full flex items-center justify-center mx-auto">
+                      <MessageSquare className="w-5.5 h-5.5 text-zinc-750" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-white text-sm">Select Conversation</h4>
-                      <p className="text-xs text-neutral-450 max-w-xs mx-auto mt-1">Choose an ongoing patient session in the side list to begin official clinicians support dialogue.</p>
+                      <h4 className="font-bold text-zinc-900 text-sm">Select Conversation</h4>
+                      <p className="text-xs text-zinc-405 max-w-xs mx-auto mt-1">Choose an ongoing patient session in the side list to begin official clinicians support dialogue.</p>
                     </div>
                   </div>
                 );
               }
 
               return (
-                <div className="flex flex-col h-full justify-between flex-1 font-sans">
+                <div className="flex flex-col h-full justify-between flex-1 font-sans text-zinc-800">
                   {/* Dialogue Header */}
-                  <div className="border-b border-neutral-900 pb-3 mb-4 flex justify-between items-center">
+                  <div className="border-b border-zinc-205 pb-3 mb-4 flex justify-between items-center text-left">
                     <div>
-                      <h4 className="font-extrabold text-[13px] text-white uppercase tracking-wider font-sans flex items-center gap-1.5">
-                        Patient Room: <span className="text-cyan-400 select-all">{patientName}</span>
+                      <h4 className="font-extrabold text-[13px] text-zinc-900 uppercase tracking-wider font-sans flex items-center gap-1.5">
+                        Patient Room: <span className="text-black bg-zinc-100 px-2.5 py-0.5 rounded-md font-bold select-all font-sans">{patientName}</span>
                       </h4>
-                      <p className="text-[9px] text-neutral-500 font-mono mt-0.5">Session UUID: {selectedSessionId}</p>
+                      <p className="text-[9px] text-zinc-400 font-mono mt-1">Session UUID: {selectedSessionId}</p>
                     </div>
                     
-                    <span className="text-[9px] uppercase font-mono tracking-widest bg-neutral-900 text-cyan-400 px-2.5 py-0.5 rounded-full border border-neutral-850 font-bold flex items-center gap-1">
-                      <span className="w-1 h-1 rounded-full bg-cyan-400 animate-ping" /> Live Sync
+                    <span className="text-[9px] uppercase font-mono tracking-widest bg-zinc-50 text-zinc-800 px-2.5 py-0.5 rounded-full border border-zinc-200 font-bold flex items-center gap-1 font-mono">
+                      <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" /> Live Sync
                     </span>
                   </div>
 
@@ -611,17 +659,17 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                       return (
                         <div key={m.id} className={`flex gap-2.5 ${isAdmin ? 'justify-end' : 'justify-start'}`}>
                           {!isAdmin && (
-                            <div className="w-6.5 h-6.5 rounded-full bg-neutral-900 text-cyan-400 border border-neutral-850 flex items-center justify-center font-bold text-[9px] shrink-0 font-mono uppercase">
+                            <div className="w-6.5 h-6.5 rounded-full bg-zinc-100 text-black border border-zinc-200 flex items-center justify-center font-bold text-[9px] shrink-0 font-mono uppercase">
                               PT
                             </div>
                           )}
-                          <div className={`p-3 rounded-2xl max-w-[80%] break-words leading-relaxed ${
+                          <div className={`p-3 rounded-2xl max-w-[80%] break-words leading-relaxed text-left ${
                             isAdmin 
-                              ? 'bg-neutral-905 bg-neutral-900 border border-neutral-800 text-white rounded-tr-none text-left' 
-                              : 'bg-neutral-900 border border-neutral-850 text-cyan-400 rounded-tl-none select-all text-left'
+                              ? 'bg-black text-white rounded-tr-none' 
+                              : 'bg-zinc-100 border border-zinc-200 text-zinc-900 rounded-tl-none select-all'
                           }`}>
-                            <p>{m.message}</p>
-                            <span className={`block text-[8px] mt-1.5 font-mono ${isAdmin ? 'text-neutral-500' : 'text-cyan-600'}`}>
+                            <p className="font-sans">{m.message}</p>
+                            <span className={`block text-[8px] mt-1.5 font-mono ${isAdmin ? 'text-zinc-400' : 'text-zinc-500'}`}>
                               {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • by {isAdmin ? 'Support desk' : m.patientName}
                             </span>
                           </div>
@@ -632,18 +680,18 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                   </div>
 
                   {/* Input Reply */}
-                  <form onSubmit={handleAdminSendReply} className="border-t border-neutral-900 pt-4 flex gap-2">
+                  <form onSubmit={handleAdminSendReply} className="border-t border-zinc-200 pt-4 flex gap-2">
                     <input
                       type="text"
                       required
                       value={adminReplyInput}
                       onChange={(e) => setAdminReplyInput(e.target.value)}
                       placeholder={`Type reply to ${patientName}...`}
-                      className="flex-1 text-xs rounded-full border border-neutral-905 border-neutral-900 bg-neutral-900 px-4 py-2.5 text-white outline-none focus:border-cyan-400 transition-all font-sans placeholder:text-neutral-600"
+                      className="flex-1 text-xs rounded-full border border-zinc-200 bg-white px-4 py-2.5 text-black outline-none focus:border-black transition-all font-sans placeholder:text-zinc-300"
                     />
                     <button
                       type="submit"
-                      className="px-5 py-2.5 bg-white hover:bg-neutral-100 text-black text-xs font-black rounded-full flex items-center gap-1 cursor-pointer transition shrink-0 shadow-md"
+                      className="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-xs font-black rounded-full flex items-center gap-1 cursor-pointer transition shrink-0 shadow-xs"
                     >
                       <span>Send Response</span>
                     </button>
@@ -658,37 +706,37 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
         /* Regular Appointment Ledger view */
         <>
       {/* 2. SQL schema helper box */}
-      <div className="bg-neutral-950 text-neutral-200 rounded-3xl overflow-hidden border border-neutral-900 shadow-md">
+      <div className="bg-white text-zinc-800 rounded-3xl overflow-hidden border border-zinc-200 shadow-xs">
         <button 
           onClick={() => setShowSqlHelper(!showSqlHelper)}
-          className="w-full flex justify-between items-center px-6 py-4 bg-neutral-950 hover:bg-neutral-900/40 border-none transition text-left cursor-pointer outline-none"
+          className="w-full flex justify-between items-center px-6 py-4 bg-white hover:bg-zinc-50 border-none transition text-left cursor-pointer outline-none"
         >
           <div className="flex items-center gap-2.5">
-            <Database className="w-4.5 h-4.5 text-cyan-400" />
+            <Database className="w-4.5 h-4.5 text-black" />
             <div>
-              <h3 className="text-sm font-extrabold text-white font-sans">Supabase DB Schema Helper & Integration</h3>
-              <p className="text-[10px] text-neutral-400 mt-0.5">Click here to copy the table schema SQL commands if you are setting up Supabase table for the first time.</p>
+              <h3 className="text-sm font-extrabold text-zinc-900 font-sans">Supabase DB Schema Helper & Integration</h3>
+              <p className="text-[10px] text-zinc-400 mt-0.5">Click here to copy the table schema SQL commands if you are setting up Supabase table for the first time.</p>
             </div>
           </div>
-          {showSqlHelper ? <ChevronUp className="w-4 h-4 text-neutral-400" /> : <ChevronDown className="w-4 h-4 text-neutral-400" />}
+          {showSqlHelper ? <ChevronUp className="w-4 h-4 text-zinc-500" /> : <ChevronDown className="w-4 h-4 text-zinc-500" />}
         </button>
 
         {showSqlHelper && (
-          <div className="p-6 border-t border-neutral-900 space-y-4">
-            <p className="text-xs text-neutral-400 leading-relaxed max-w-3xl font-sans">
+          <div className="p-6 border-t border-zinc-200 space-y-4 bg-zinc-50">
+            <p className="text-xs text-zinc-500 leading-relaxed max-w-3xl font-sans text-left">
               Since appointments go to your personal Supabase instance under project reference <strong>dzwnzgjgqaolglvophtu</strong>, please ensure you have run this CREATE TABLE command in your Supabase dashboard first so SQL queries can correctly save patient records.
             </p>
 
             <div className="relative">
-              <pre className="p-4 bg-neutral-900/30 rounded-2xl text-[10px] sm:text-xs text-cyan-400 font-mono overflow-x-auto max-h-56 leading-normal border border-neutral-900">
+              <pre className="p-4 bg-white rounded-2xl text-[10px] sm:text-xs text-black font-mono overflow-x-auto max-h-56 leading-normal border border-zinc-200">
                 {sqlSchemaText}
               </pre>
               <button
                 type="button"
                 onClick={copySqlToClipboard}
-                className="absolute top-3 right-3 py-1.5 px-3 bg-neutral-950 hover:bg-neutral-900 text-neutral-300 rounded-lg flex items-center gap-1 text-[10px] border border-neutral-850 transition cursor-pointer font-sans"
+                className="absolute top-3 right-3 py-1.5 px-3 bg-black hover:bg-zinc-800 text-white rounded-lg flex items-center gap-1 text-[10px] border border-black transition cursor-pointer font-sans"
               >
-                {sqlCopied ? <Check className="w-3 h-3 text-cyan-400 font-bold" /> : <Copy className="w-3 h-3" />}
+                {sqlCopied ? <Check className="w-3 h-3 text-white font-bold" /> : <Copy className="w-3 h-3" />}
                 {sqlCopied ? 'Copied script!' : 'Copy Script'}
               </button>
             </div>
@@ -697,74 +745,74 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
       </div>
 
       {/* 3. Analytics Quick Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-neutral-200">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-zinc-800">
         
-        <div className="bg-neutral-950 rounded-3xl border border-neutral-900 p-5 shadow-sm">
+        <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-xs">
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-mono font-bold uppercase text-neutral-500 tracking-wider">Total Registers</span>
-            <div className="p-1.5 bg-neutral-900 text-cyan-400 rounded-xl">
+            <span className="text-[10px] font-mono font-bold uppercase text-zinc-400 tracking-wider">Total Registers</span>
+            <div className="p-1.5 bg-zinc-150 bg-zinc-100 text-black rounded-xl">
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-3xl font-sans font-extrabold text-white mt-1.5">{totalRegistrations}</p>
-          <p className="text-[10px] text-neutral-500 mt-1 uppercase font-mono">Durable appointments list</p>
+          <p className="text-3xl font-sans font-extrabold text-zinc-900 mt-1.5 tracking-tight">{totalRegistrations}</p>
+          <p className="text-[10px] text-zinc-400 mt-1 uppercase font-mono">Durable appointments list</p>
         </div>
 
-        <div className="bg-neutral-950 rounded-3xl border border-neutral-900 p-5 shadow-sm">
+        <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-xs">
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-mono font-bold uppercase text-cyan-400 tracking-wider">Clinical Queue</span>
-            <div className="p-1.5 bg-neutral-900 text-cyan-400 rounded-xl">
-              <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+            <span className="text-[10px] font-mono font-bold uppercase text-zinc-450 tracking-wider">Clinical Queue</span>
+            <div className="p-1.5 bg-zinc-100 text-zinc-900 rounded-xl">
+              <CheckCircle2 className="w-4 h-4 text-black" />
             </div>
           </div>
-          <p className="text-3xl font-sans font-extrabold text-cyan-400 mt-1.5">{activeConfirmed}</p>
-          <p className="text-[10px] text-neutral-500 mt-1 uppercase font-mono">Awaiting Counter lobby</p>
+          <p className="text-3xl font-sans font-extrabold text-zinc-900 mt-1.5 tracking-tight">{activeConfirmed}</p>
+          <p className="text-[10px] text-zinc-400 mt-1 uppercase font-mono">Awaiting Counter lobby</p>
         </div>
 
-        <div className="bg-neutral-950 rounded-3xl border border-neutral-900 p-5 shadow-sm">
+        <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-xs">
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-mono font-bold uppercase text-neutral-550 tracking-wider">Cancelled OPDs</span>
-            <div className="p-1.5 bg-neutral-900 text-neutral-550 rounded-xl">
-              <XCircle className="w-4 h-4 text-neutral-500" />
+            <span className="text-[10px] font-mono font-bold uppercase text-zinc-450 tracking-wider">Cancelled OPDs</span>
+            <div className="p-1.5 bg-zinc-100 text-zinc-455 rounded-xl">
+              <XCircle className="w-4 h-4 text-zinc-500" />
             </div>
           </div>
-          <p className="text-3xl font-sans font-extrabold text-white mt-1.5">{cancelledSlips}</p>
-          <p className="text-[10px] text-neutral-500 mt-1 uppercase font-mono">Marked cancelled slip</p>
+          <p className="text-3xl font-sans font-extrabold text-zinc-900 mt-1.5 tracking-tight">{cancelledSlips}</p>
+          <p className="text-[10px] text-zinc-400 mt-1 uppercase font-mono">Marked cancelled slip</p>
         </div>
 
-        <div className="bg-neutral-950 rounded-3xl border border-neutral-900 p-5 shadow-sm">
+        <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-xs">
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-mono font-bold uppercase text-emerald-400 tracking-wider">Total Collection</span>
-            <div className="p-1.5 bg-neutral-900 text-cyan-400 rounded-xl">
-              <Activity className="w-4 h-4 text-cyan-400" />
+            <span className="text-[10px] font-mono font-bold uppercase text-zinc-900 tracking-wider">Total Collection</span>
+            <div className="p-1.5 bg-zinc-100 text-black rounded-xl">
+              <Activity className="w-4 h-4 text-black" />
             </div>
           </div>
-          <p className="text-3xl font-sans font-extrabold text-cyan-400 mt-1.5">₹{totalFees}</p>
-          <p className="text-[10px] text-neutral-500 mt-1 uppercase font-mono">Core clinical revenues</p>
+          <p className="text-3xl font-sans font-extrabold text-zinc-900 mt-1.5 tracking-tight">₹{totalFees}</p>
+          <p className="text-[10px] text-zinc-400 mt-1 uppercase font-mono">Core clinical revenues</p>
         </div>
 
       </div>
 
       {/* 4. Table view control dashboard */}
-      <div className="bg-neutral-950 border border-neutral-900 rounded-3xl shadow-md p-6 space-y-6 text-neutral-200">
+      <div className="bg-white border border-zinc-200 rounded-3xl shadow-xs p-6 space-y-6 text-zinc-800">
         
         {/* Table Filters header */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-4 border-b border-neutral-900">
-          <div>
-            <h3 className="font-extrabold text-white text-lg">Detailed Patient Ledger</h3>
-            <p className="text-xs text-neutral-400">Filter records and trigger live queue serial modifications.</p>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-4 border-b border-zinc-200">
+          <div className="text-left">
+            <h3 className="font-extrabold text-zinc-900 text-lg tracking-tight">Detailed Patient Ledger</h3>
+            <p className="text-xs text-zinc-500">Filter records and trigger live queue serial modifications.</p>
           </div>
 
           <div className="flex flex-wrap gap-2 w-full lg:w-auto">
             {/* Search */}
             <div className="relative w-full sm:w-60">
-              <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500" />
+              <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
               <input 
                 type="text"
                 placeholder="Search Patient, Doctor, Token..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-full border border-neutral-900 bg-neutral-900 pl-9 pr-4 py-2 text-xs text-white focus:border-cyan-400 outline-none placeholder:text-neutral-600"
+                className="w-full rounded-full border border-zinc-200 bg-zinc-50 pl-9 pr-4 py-2 text-xs text-zinc-900 focus:border-black outline-none placeholder:text-zinc-350"
               />
             </div>
 
@@ -772,7 +820,7 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded-full border border-neutral-900 bg-neutral-900 text-neutral-300 px-3 py-1.5 text-xs outline-none focus:border-cyan-400 select-mono"
+              className="rounded-full border border-zinc-200 bg-white text-zinc-800 px-3 py-1.5 text-xs outline-none focus:border-black select-mono cursor-pointer"
             >
               <option value="All">All statuses</option>
               <option value="Confirmed">Confirmed</option>
@@ -783,7 +831,7 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
             <select
               value={doctorFilter}
               onChange={(e) => setDoctorFilter(e.target.value)}
-              className="rounded-full border border-neutral-900 bg-neutral-900 text-neutral-300 px-3 py-1.5 text-xs outline-none focus:border-cyan-400 max-w-[150px] truncate select-mono"
+              className="rounded-full border border-zinc-200 bg-white text-zinc-800 px-3 py-1.5 text-xs outline-none focus:border-black max-w-[150px] truncate select-mono cursor-pointer"
             >
               <option value="All">All Doctors</option>
               {uniqueDoctors.map(doc => <option key={doc} value={doc}>{doc}</option>)}
@@ -793,7 +841,7 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
             <select
               value={branchFilter}
               onChange={(e) => setBranchFilter(e.target.value)}
-              className="rounded-full border border-neutral-900 bg-neutral-900 text-neutral-300 px-3 py-1.5 text-xs outline-none focus:border-cyan-400 max-w-[150px] truncate select-mono"
+              className="rounded-full border border-zinc-200 bg-white text-zinc-800 px-3 py-1.5 text-xs outline-none focus:border-black max-w-[150px] truncate select-mono cursor-pointer"
             >
               <option value="All">All Branches</option>
               {uniqueBranches.map(br => <option key={br} value={br}>{br}</option>)}
@@ -803,10 +851,10 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
 
         {/* Database List */}
         {filteredApts.length > 0 ? (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto text-left">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-neutral-900 text-[10px] font-mono uppercase text-neutral-500 font-bold">
+                <tr className="border-b border-zinc-150 text-[10px] font-mono uppercase text-zinc-400 font-bold whitespace-nowrap">
                   <th className="py-3.5 px-2">OPD Token</th>
                   <th className="py-3.5 px-2">Patient Details</th>
                   <th className="py-3.5 px-2">Consultant Doctor</th>
@@ -816,28 +864,28 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                   <th className="py-3.5 px-2 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-900/60">
+              <tbody className="divide-y divide-zinc-100">
                 {filteredApts.map((apt) => (
                   <tr 
                     key={apt.id} 
-                    className={`hover:bg-neutral-900/30 transition ${
-                      apt.status === 'Cancelled' ? 'bg-neutral-950 opacity-40 text-neutral-500' : ''
+                    className={`hover:bg-zinc-50 transition ${
+                      apt.status === 'Cancelled' ? 'bg-zinc-50/50 opacity-50 text-zinc-400' : ''
                     }`}
                   >
                     {/* OPD Token number display */}
-                    <td className="py-4.5 px-2 font-mono font-bold text-cyan-400">
+                    <td className="py-4.5 px-2 font-mono font-extrabold text-zinc-900 border-none">
                       {apt.tokenNumber || 'OPD-PEND'}
                     </td>
                     
                     {/* Patient detail display */}
                     <td className="py-4.5 px-2">
                       <div>
-                        <p className="font-extrabold text-white text-[13px]">{apt.patientName}</p>
-                        <p className="text-[10px] text-neutral-400 mt-0.5">
+                        <p className="font-extrabold text-zinc-950 text-[13px]">{apt.patientName}</p>
+                        <p className="text-[10px] text-zinc-500 mt-0.5">
                           {apt.patientGender}, {apt.patientAge} Years • {apt.patientPhone}
                         </p>
                         {apt.symptoms && (
-                          <p className="text-[10px] text-neutral-500 mt-1 italic max-w-xs truncate" title={apt.symptoms}>
+                          <p className="text-[10px] text-zinc-400 mt-1 italic max-w-xs truncate" title={apt.symptoms}>
                             symptom: "{apt.symptoms}"
                           </p>
                         )}
@@ -847,23 +895,23 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                     {/* Consulting physician displays */}
                     <td className="py-4.5 px-2">
                       <div>
-                        <p className="font-extrabold text-neutral-200">{apt.doctor?.name || 'Unassigned doctor'}</p>
-                        <p className="text-[10px] text-neutral-400 mt-0.5">
+                        <p className="font-extrabold text-zinc-850">{apt.doctor?.name || 'Unassigned doctor'}</p>
+                        <p className="text-[10px] text-zinc-500 mt-0.5">
                           {apt.doctor?.specialty || 'General Practitioner'} • Fee: ₹{apt.doctor?.fees || 0}
                         </p>
                       </div>
                     </td>
 
                     {/* Branch locations */}
-                    <td className="py-4.5 px-2 text-neutral-300 font-sans max-w-[130px] truncate" title={apt.branch?.name}>
+                    <td className="py-4.5 px-2 text-zinc-700 font-sans max-w-[130px] truncate" title={apt.branch?.name}>
                       {apt.branch?.name?.split('(')[0] || 'Main Branch'}
                     </td>
 
                     {/* Timings */}
                     <td className="py-4.5 px-2">
                       <div>
-                        <p className="font-bold text-neutral-200 font-mono">{apt.appointmentDate}</p>
-                        <p className="text-[10px] text-neutral-500 mt-0.5 font-mono">{apt.appointmentTime}</p>
+                        <p className="font-bold text-zinc-900 font-mono">{apt.appointmentDate}</p>
+                        <p className="text-[10px] text-zinc-400 mt-0.5 font-mono">{apt.appointmentTime}</p>
                       </div>
                     </td>
 
@@ -871,11 +919,11 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                     <td className="py-4.5 px-2">
                       <span className={`inline-flex items-center gap-1 text-[9px] font-mono px-2.5 py-0.5 rounded-full border uppercase ${
                         apt.status === 'Confirmed' 
-                          ? 'bg-neutral-900 border-cyan-400/20 text-cyan-400 font-bold' 
-                          : 'bg-neutral-900 border-neutral-800 text-neutral-500'
+                          ? 'bg-zinc-100 border-zinc-200 text-zinc-800 font-bold' 
+                          : 'bg-zinc-50 border-zinc-200 text-zinc-400'
                       }`}>
                         {apt.status === 'Confirmed' ? (
-                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse"></span>
                         ) : null}
                         {apt.status}
                       </span>
@@ -890,10 +938,10 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                             // Switch tab to "appointments" and simulate clicking on receipt
                             window.dispatchEvent(new CustomEvent('switch-tab', { detail: 'appointments' }));
                           }}
-                          className="p-1 px-3 bg-neutral-905 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 text-cyan-400 hover:text-white rounded-lg flex items-center gap-1 font-bold cursor-pointer transition-all"
+                          className="p-1 px-3 bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-lg flex items-center gap-1 font-bold cursor-pointer transition-all shadow-xs text-xs"
                           title="Print OPD Gate Slip"
                         >
-                          <Printer className="w-3 h-3" />
+                          <Printer className="w-3 h-3 text-zinc-700" />
                           <span>Receipt</span>
                         </button>
 
@@ -902,10 +950,10 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
                           <button
                             onClick={() => handleCancel(apt.id)}
                             disabled={isLoading}
-                            className="p-1 px-2.5 bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-rose-450 hover:bg-rose-955/10 rounded-lg transition-all cursor-pointer"
+                            className="p-1 px-2.5 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-650 rounded-lg transition-all cursor-pointer"
                             title="Cancel Registration slip appointment"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 text-zinc-600" />
                           </button>
                         )}
                       </div>
@@ -917,12 +965,12 @@ CREATE POLICY "Public Chat Update Access" ON chat_messages FOR UPDATE USING (tru
           </div>
         ) : (
           <div className="text-center py-12 space-y-3.5">
-            <div className="w-12 h-12 bg-neutral-900 text-neutral-600 rounded-full flex items-center justify-center mx-auto border border-neutral-850">
-              <AlertCircle className="w-5 h-5 text-neutral-500" />
+            <div className="w-12 h-12 bg-zinc-50 text-zinc-450 rounded-full flex items-center justify-center mx-auto border border-zinc-200">
+              <AlertCircle className="w-5 h-5 text-zinc-500" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">No synchronized clinic records match search options</h4>
-              <p className="text-xs text-neutral-400 max-w-sm mx-auto mt-1">Adjust filter settings, look up other specialties, or book a new live client consultation slip to generate traffic.</p>
+              <h4 className="font-bold text-zinc-800 text-sm">No synchronized clinic records match search options</h4>
+              <p className="text-xs text-zinc-400 max-w-sm mx-auto mt-1">Adjust filter settings, look up other specialties, or book a new live client consultation slip to generate traffic.</p>
             </div>
           </div>
         )}
